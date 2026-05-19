@@ -72,6 +72,13 @@ try {
     if (isTaxBillStr != null && !isTaxBillStr.trim().isEmpty()) {
         isTaxBill = Integer.parseInt(isTaxBillStr);
     }
+
+    // Get new client flag
+    int isNewClient = 0;
+    String isNewClientStr = request.getParameter("isNewClient");
+    if (isNewClientStr != null && !isNewClientStr.trim().isEmpty()) {
+        isNewClient = Integer.parseInt(isNewClientStr);
+    }
     
     // Parse numeric parameters with null-safety
     double finalDiscount = 0.0;
@@ -172,7 +179,7 @@ try {
         productList.add(new ProductItem(productId, qty, price, discount, total, gst, cost, commission));
     }
 
-    String billDisplay = bill.saveBillItems(productList, customerName, finalDiscount, payableAmount, grandTotal, uid, priceTotal, discountTotal,customerPhn,totalPaid,cashPaid,bankPaid,mode,type,balance,customerId,priceCategory,attenderId,isTaxBill,description);
+    String billDisplay = bill.saveBillItems(productList, customerName, finalDiscount, payableAmount, grandTotal, uid, priceTotal, discountTotal,customerPhn,totalPaid,cashPaid,bankPaid,mode,type,balance,customerId,priceCategory,attenderId,isTaxBill,description,isNewClient);
     int billId = bill.getBillId(billDisplay);
     
     // Auto-allocate cheques for credit bills

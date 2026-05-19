@@ -540,6 +540,14 @@ public String saveBillItems(List<ProductItem> items,
                          double payableAmount, double grandTotal,
                          int uid, double priceTotal, double discountTotal,String customerPhn
                          	,double totalPaid,double cashPaid,double bankPaid,int mode,int type,double balance,int customerId,int priceCategory,int attenderId,int isTaxBill,String description) throws Exception {
+    return saveBillItems(items, customerName, finalDiscount, payableAmount, grandTotal, uid, priceTotal, discountTotal, customerPhn, totalPaid, cashPaid, bankPaid, mode, type, balance, customerId, priceCategory, attenderId, isTaxBill, description, 0);
+}
+
+public String saveBillItems(List<ProductItem> items,
+                         String customerName, double finalDiscount,
+                         double payableAmount, double grandTotal,
+                         int uid, double priceTotal, double discountTotal,String customerPhn
+                         	,double totalPaid,double cashPaid,double bankPaid,int mode,int type,double balance,int customerId,int priceCategory,int attenderId,int isTaxBill,String description,int isNewClient) throws Exception {
     Connection con = null;
     PreparedStatement ps = null;
     ResultSet rs = null;
@@ -580,8 +588,8 @@ public String saveBillItems(List<ProductItem> items,
         ps.close();
 
         
-        String sql = "INSERT INTO prod_bill (bill_display, total, extraDisc, payable, paid, uid, DATE, TIME, cusName, prodDisc, cusPhn, paymentMode, paymentType, balance, is_balance,currentBalance,customerId,price_category,attender_id,is_tax_bill,description) " +
-             "VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO prod_bill (bill_display, total, extraDisc, payable, paid, uid, DATE, TIME, cusName, prodDisc, cusPhn, paymentMode, paymentType, balance, is_balance,currentBalance,customerId,price_category,attender_id,is_tax_bill,description,is_new_client) " +
+             "VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW(), ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?)";
 
 ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -613,6 +621,7 @@ if (attenderId > 0) {
 }
 ps.setInt(18, isTaxBill);
 ps.setString(19, description != null ? description : "");
+ps.setInt(20, isNewClient);
 
 ps.executeUpdate();
 
@@ -2840,6 +2849,45 @@ public Vector getSalesReportByCustomer(String from, String to, int customerId) t
         if (con != null) try { con.close(); } catch (Exception e) { }
     }
 }
+
+public Vector getClientListReport(String fromDate, String toDate) throws Exception {
+    Connection con = null;
+    PreparedStatement pt = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        Vector vec = new Vector();
+        pt = con.prepareStatement(
+            "SELECT pb.date, pb.cusName, pb.cusPhn, pb.payable, " +
+            "pb.description, c.address " +
+            "FROM prod_bill pb " +
+            "LEFT JOIN customers c ON pb.customerId = c.id " +
+            "WHERE pb.is_new_client = 1 " +
+            "AND pb.is_cancelled = 0 " +
+            "AND pb.date BETWEEN ? AND ? " +
+            "ORDER BY pb.date ASC, pb.id ASC"
+        );
+        pt.setString(1, fromDate);
+        pt.setString(2, toDate);
+        rs = pt.executeQuery();
+        while (rs.next()) {
+            Vector row = new Vector();
+            row.addElement(rs.getString(1));   // 0 date
+            row.addElement(rs.getString(2));   // 1 cusName
+            row.addElement(rs.getString(3));   // 2 cusPhn
+            row.addElement(rs.getDouble(4));   // 3 payable
+            row.addElement(rs.getString(5) != null ? rs.getString(5) : ""); // 4 bill description
+            row.addElement(rs.getString(6) != null ? rs.getString(6) : ""); // 5 customer address
+            vec.addElement(row);
+        }
+        return vec;
+    } finally {
+        if (rs  != null) try { rs.close();  } catch (SQLException e) { }
+        if (pt  != null) try { pt.close();  } catch (SQLException e) { }
+        if (con != null) try { con.close(); } catch (Exception  e) { }
+    }
+}
+
 public String getNumPaid(double amount) {
         long rupees = (long) amount;
         int paise = (int) Math.round((amount - rupees) * 100);

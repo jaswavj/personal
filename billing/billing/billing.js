@@ -694,8 +694,11 @@ function saveBill() {
     if ((!customerId || customerId === "0") && (customerName === "" || customerName === "-")) customerId = "1";
     let attenderId = document.getElementById("attenderId") ? document.getElementById("attenderId").value : "";
 
-    // Get tax bill checkbox value
-    let isTaxBill = document.getElementById("isTaxBill").checked ? 1 : 0;
+    // Get tax bill value (always 1 – hidden field)
+    let isTaxBill = parseInt(document.getElementById("isTaxBill").value) || 1;
+
+    // Get new client checkbox value
+    const isNewClient = (document.getElementById('isNewClient') && document.getElementById('isNewClient').checked) ? 1 : 0;
 
     // Get selected price category
     const priceCategory = 3;
@@ -738,7 +741,7 @@ function saveBill() {
 
     // Store validated data and open description modal
     window._pendingBill = {
-        customerName, customerId, attenderId, priceCategory, isTaxBill,
+        customerName, customerId, attenderId, priceCategory, isTaxBill, isNewClient,
         finalDiscount, payableAmount, grandTotal, priceTotal, discountTotal,
         customerPhn, mode, type, cashPaid, bankPaid, totalPaid, balance
     };
@@ -804,7 +807,8 @@ function doSaveBill() {
             balance:      b.balance,
             description:  description,
             quotationId:  currentQuotationId || 0,
-            isEligibleForCommission: isEligibleForCommission ? 1 : 0,
+            isEligibleForCommission: 0,
+            isNewClient:  b.isNewClient,
             products:     JSON.stringify(products),
             exchangePointUsed: parseFloat(document.getElementById('exchangePointUsed').value) || 0
         },

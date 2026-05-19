@@ -91,14 +91,15 @@ for (int i = 0; i < vecPer.size(); i++) {
       <i class="fas fa-file-invoice"></i>
       <span>Ledger Report</span>
     </a>
+    <% } %>
+  <% if (permissions.contains(1)) { %>
+    <a href="<%=request.getContextPath()%>/reports/clientList/page.jsp" class="sidebar-item">
+      <i class="fas fa-user-plus"></i>
+      <span>Client List</span>
+    </a>
 
     <% } %>
-<% if (permissions.contains(1)) { %>
-    <a href="<%=request.getContextPath()%>/reports/sales/page.jsp" class="sidebar-item">
-      <i class="fas fa-file-invoice"></i>
-      <span>Sales Report</span>
-    </a>
-    <% } %>
+
   <% if (permissions.contains(1)) { %>
     <a href="<%=request.getContextPath()%>/reports/yearlyReport/page.jsp" class="sidebar-item">
       <i class="fas fa-file-invoice"></i>
@@ -199,7 +200,9 @@ for (int i = 0; i < vecPer.size(); i++) {
             <i class="fas fa-money-bill-wave me-2"></i>Sales Reports
             <i class="fas fa-chevron-down ms-auto"></i>
           </a>
+
           <div class="collapse sidebar-submenu" id="collectionReportMenu">
+
             <a href="<%=request.getContextPath()%>/reports/sales/page.jsp" class="sidebar-subitem">Sales Report</a>
             <a href="<%=request.getContextPath()%>/reports/salesByCate/page.jsp" class="sidebar-subitem">Sales by <%=head1%></a>
             <a href="<%=request.getContextPath()%>/reports/salesByDept/page.jsp" class="sidebar-subitem">Sales by <%=head2%></a>

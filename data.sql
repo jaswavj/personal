@@ -183,7 +183,7 @@ CREATE TABLE `expense_entry` (
   `uid` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `type` (`exp_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `expense_entry` */
 
@@ -196,7 +196,8 @@ insert  into `expense_entry`(`id`,`exp_type`,`content`,`amount`,`description`,`e
 (6,1,'ADS',6500.00,'','2026-02-18 12:05:00','2026-05-18 12:05:22',1,1),
 (7,1,'ADS',6000.00,'','2026-03-18 12:05:00','2026-05-18 12:05:49',1,1),
 (8,1,'ADS',100.00,'','2026-04-18 12:05:00','2026-05-18 12:06:02',1,1),
-(9,1,'ADS',1400.00,'','2026-05-18 12:06:00','2026-05-18 12:06:11',1,1);
+(9,1,'ADS',1400.00,'','2026-05-18 12:06:00','2026-05-18 12:06:11',1,1),
+(10,1,'ads',500.00,'','2026-05-19 10:47:00','2026-05-19 10:47:24',1,1);
 
 /*Table structure for table `expense_type` */
 
@@ -406,6 +407,7 @@ CREATE TABLE `prod_bill` (
   `lr_name` varchar(255) DEFAULT NULL,
   `attender_id` int DEFAULT NULL,
   `description` text,
+  `is_new_client` int DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `uid` (`uid`),
   KEY `mode` (`paymentMode`),
@@ -415,25 +417,25 @@ CREATE TABLE `prod_bill` (
 
 /*Data for the table `prod_bill` */
 
-insert  into `prod_bill`(`id`,`bill_display`,`is_tax_bill`,`is_receipt`,`total`,`prodDisc`,`extraDisc`,`payable`,`paid`,`balance`,`currentBalance`,`is_balance`,`paymentMode`,`paymentType`,`uid`,`date`,`time`,`is_cancelled`,`bill_type`,`cusName`,`cusPhn`,`customerId`,`price_category`,`lr_no`,`lr_date`,`lr_name`,`attender_id`,`description`) values 
-(1,'26-1',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2025-09-26','11:45:19',0,1,'SAI DHEETSHA HEART HOSPITAL','7904612433',1,3,NULL,NULL,NULL,NULL,'Insta Ads'),
-(2,'26-2',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2025-11-03','11:45:57',0,1,'SAI DHEETSHA SUPER SPECIALITY MEDICAL CENTRE','7904612433',2,3,NULL,NULL,NULL,NULL,'referred by 26-1'),
-(3,'26-3',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2025-12-26','11:46:30',0,1,'VETRI MOBILES AND HOME APPLIANCES','9384338182',3,3,NULL,NULL,NULL,NULL,'insta ads'),
-(4,'26-4',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-01-01','11:47:06',0,1,'Tamil Crafts','8270176355',4,3,NULL,NULL,NULL,NULL,'insta ads'),
-(5,'26-5',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-01-09','11:47:38',0,1,'HITECH INDIA AGRO INDUSTRY','8838900000',5,3,NULL,NULL,NULL,NULL,'insta ads'),
-(6,'26-6',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-01-14','11:47:56',0,1,'VETRIVELA','9080703703',6,3,NULL,NULL,NULL,NULL,'insta ads'),
-(7,'26-7',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-01-27','11:48:26',0,1,'SM Store chennai','9884422517',7,3,NULL,NULL,NULL,NULL,'insta ads'),
-(8,'26-8',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-02-07','11:48:58',0,1,'Everyday Restro Cafe','9994209494',8,3,NULL,NULL,NULL,NULL,'insta ads\nonline -900'),
-(9,'26-9',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-02-13','11:50:43',0,1,'javera clothing','9343201020',16,3,NULL,NULL,NULL,NULL,'insta ads'),
-(10,'26-10',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:51:19',0,1,'Somnath agro machine','9597949332',17,3,NULL,NULL,NULL,NULL,'referred by 26-5'),
-(11,'26-11',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:52:04',0,1,'AJ Computer centre','9976030500',9,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600'),
-(12,'26-12',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,1,0,1,'2026-03-09','11:52:46',0,1,'mapla menswear','9047476247',10,3,NULL,NULL,NULL,NULL,'referred by kingston'),
-(13,'26-13',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-03-14','11:53:08',0,1,'mohana electrical pudukottai','8122122150',11,3,NULL,NULL,NULL,NULL,'insta ads'),
-(14,'26-14',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-04-17','11:53:26',0,1,'JAngel rehoboth clothing chennai','8056191358',12,3,NULL,NULL,NULL,NULL,'insta ads'),
-(15,'26-15',1,1,6000.000,0.000,0.000,6000.000,6000.000,0.000,0.000,0,2,1,1,'2026-05-02','11:53:53',0,1,'Bike inventory','9342217202',13,3,NULL,NULL,NULL,NULL,'ref by saran'),
-(16,'26-16',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-05-07','11:54:29',0,1,'Guna Gifts','9940125902',14,3,NULL,NULL,NULL,NULL,'insta ads \nonine - 800'),
-(17,'26-17',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-05-15','11:55:02',0,1,'Kingston wholesale','7010122543',15,3,NULL,NULL,NULL,NULL,'ref by kingston\nonline -550'),
-(18,'26-18',1,1,5000.000,0.000,0.000,5000.000,2000.000,3000.000,3000.000,1,2,1,1,'2026-05-18','15:57:46',0,1,'Ticket','9715825688',18,3,NULL,NULL,NULL,NULL,'insta ads\nonline');
+insert  into `prod_bill`(`id`,`bill_display`,`is_tax_bill`,`is_receipt`,`total`,`prodDisc`,`extraDisc`,`payable`,`paid`,`balance`,`currentBalance`,`is_balance`,`paymentMode`,`paymentType`,`uid`,`date`,`time`,`is_cancelled`,`bill_type`,`cusName`,`cusPhn`,`customerId`,`price_category`,`lr_no`,`lr_date`,`lr_name`,`attender_id`,`description`,`is_new_client`) values 
+(1,'26-1',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2025-09-26','11:45:19',0,1,'SAI DHEETSHA HEART HOSPITAL','7904612433',1,3,NULL,NULL,NULL,NULL,'Insta Ads',1),
+(2,'26-2',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2025-11-03','11:45:57',0,1,'SAI DHEETSHA SUPER SPECIALITY MEDICAL CENTRE','7904612433',2,3,NULL,NULL,NULL,NULL,'referred by 26-1',1),
+(3,'26-3',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2025-12-26','11:46:30',0,1,'VETRI MOBILES AND HOME APPLIANCES','9384338182',3,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(4,'26-4',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-01-01','11:47:06',0,1,'Tamil Crafts','8270176355',4,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(5,'26-5',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-01-09','11:47:38',0,1,'HITECH INDIA AGRO INDUSTRY','8838900000',5,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(6,'26-6',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-01-14','11:47:56',0,1,'VETRIVELA','9080703703',6,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(7,'26-7',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-01-27','11:48:26',0,1,'SM Store chennai','9884422517',7,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(8,'26-8',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-02-07','11:48:58',0,1,'Everyday Restro Cafe','9994209494',8,3,NULL,NULL,NULL,NULL,'insta ads\nonline -900',1),
+(9,'26-9',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-02-13','11:50:43',0,1,'javera clothing','9343201020',16,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(10,'26-10',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:51:19',0,1,'Somnath agro machine','9597949332',17,3,NULL,NULL,NULL,NULL,'referred by 26-5',1),
+(11,'26-11',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:52:04',0,1,'AJ Computer centre','9976030500',9,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600',1),
+(12,'26-12',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,1,0,1,'2026-03-09','11:52:46',0,1,'mapla menswear','9047476247',10,3,NULL,NULL,NULL,NULL,'referred by kingston',1),
+(13,'26-13',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-03-14','11:53:08',0,1,'mohana electrical pudukottai','8122122150',11,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(14,'26-14',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-04-17','11:53:26',0,1,'JAngel rehoboth clothing chennai','8056191358',12,3,NULL,NULL,NULL,NULL,'insta ads',1),
+(15,'26-15',1,1,6000.000,0.000,0.000,6000.000,6000.000,0.000,0.000,0,2,1,1,'2026-05-02','11:53:53',0,1,'Bike inventory','9342217202',13,3,NULL,NULL,NULL,NULL,'ref by saran',1),
+(16,'26-16',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-05-07','11:54:29',0,1,'Guna Gifts','9940125902',14,3,NULL,NULL,NULL,NULL,'insta ads \nonine - 800',1),
+(17,'26-17',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-05-15','11:55:02',0,1,'Kingston wholesale','7010122543',15,3,NULL,NULL,NULL,NULL,'ref by kingston\nonline -550',1),
+(18,'26-18',1,1,5000.000,0.000,0.000,5000.000,2000.000,3000.000,3000.000,1,2,1,1,'2026-05-18','15:57:46',0,1,'Ticket','9715825688',18,3,NULL,NULL,NULL,NULL,'insta ads\nonline',1);
 
 /*Table structure for table `prod_bill_cancel` */
 
@@ -757,12 +759,13 @@ CREATE TABLE `prod_ledger` (
   `ref_id` int DEFAULT NULL COMMENT 'bill_id or expense_entry_id',
   `uid` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_ledger` */
 
 insert  into `prod_ledger`(`id`,`entry_date_time`,`content`,`amount`,`is_receipt`,`ref_id`,`uid`) values 
-(1,'2026-05-18 16:51:18','OLD BALANCE',8750.00,1,1,1);
+(1,'2026-05-18 16:51:18','OLD BALANCE',8750.00,1,1,1),
+(2,'2026-05-19 10:47:00','ads',500.00,0,10,1);
 
 /*Table structure for table `prod_lifecycle` */
 
