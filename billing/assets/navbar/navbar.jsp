@@ -113,6 +113,21 @@ for (int i = 0; i < vecPer.size(); i++) {
     </a>
 
     <% } %>
+
+  <% if (permissions.contains(1)) { %>
+    <div class="sidebar-dropdown">
+      <a href="#" class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#cloudMenu">
+        <i class="fas fa-cloud"></i>
+        <span>Cloud</span>
+        <i class="fas fa-chevron-down ms-auto"></i>
+      </a>
+      <div class="collapse sidebar-submenu" id="cloudMenu">
+        <a href="<%=request.getContextPath()%>/cloud/list.jsp" class="sidebar-subitem"><i class="fas fa-list me-2"></i>Cloud Clients</a>
+        <a href="<%=request.getContextPath()%>/cloud/report1.jsp" class="sidebar-subitem"><i class="fas fa-user-circle me-2"></i>Client History</a>
+        <a href="<%=request.getContextPath()%>/cloud/report2.jsp" class="sidebar-subitem"><i class="fas fa-table me-2"></i>Settlement Report</a>
+      </div>
+    </div>
+    <% } %>
     
     
       <% if (permissions.contains(12)) { %>

@@ -485,6 +485,10 @@ int userDiscPer = (uid != null) ? userBn.getUserDiscPer(uid) : 100;
                 <input class="form-check-input" type="checkbox" id="isNewClient">
                 <span class="tog-lbl"><i class="fa-solid fa-user-plus"></i> New Client</span>
             </label>
+            <label class="tog" style="border-color:#0ea5e9;">
+                <input class="form-check-input" type="checkbox" id="isCloud">
+                <span class="tog-lbl" style="color:#0ea5e9;"><i class="fa-solid fa-cloud"></i> Cloud</span>
+            </label>
             <button class="bb bb-outline" data-bs-toggle="modal" data-bs-target="#quotationListModal">
                 <i class="fa-solid fa-clock"></i> HOLD LIST
             </button>

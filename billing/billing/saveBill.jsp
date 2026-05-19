@@ -79,6 +79,13 @@ try {
     if (isNewClientStr != null && !isNewClientStr.trim().isEmpty()) {
         isNewClient = Integer.parseInt(isNewClientStr);
     }
+
+    // Get cloud flag
+    int isCloud = 0;
+    String isCloudStr = request.getParameter("isCloud");
+    if (isCloudStr != null && !isCloudStr.trim().isEmpty()) {
+        isCloud = Integer.parseInt(isCloudStr);
+    }
     
     // Parse numeric parameters with null-safety
     double finalDiscount = 0.0;
@@ -179,7 +186,7 @@ try {
         productList.add(new ProductItem(productId, qty, price, discount, total, gst, cost, commission));
     }
 
-    String billDisplay = bill.saveBillItems(productList, customerName, finalDiscount, payableAmount, grandTotal, uid, priceTotal, discountTotal,customerPhn,totalPaid,cashPaid,bankPaid,mode,type,balance,customerId,priceCategory,attenderId,isTaxBill,description,isNewClient);
+    String billDisplay = bill.saveBillItems(productList, customerName, finalDiscount, payableAmount, grandTotal, uid, priceTotal, discountTotal,customerPhn,totalPaid,cashPaid,bankPaid,mode,type,balance,customerId,priceCategory,attenderId,isTaxBill,description,isNewClient,isCloud);
     int billId = bill.getBillId(billDisplay);
     
     // Auto-allocate cheques for credit bills
@@ -247,6 +254,15 @@ try {
             bill.useExchangePoint(customerId, billId, exchangePointUsed, uid);
         } catch (Exception e) {
             System.out.println("Error deducting exchange points: " + e.getMessage());
+        }
+    }
+
+    // Create cloud subscription record if this is a cloud bill
+    if (isCloud == 1 && billId > 0) {
+        try {
+            bill.createCloudBillRecord(billId, customerId);
+        } catch (Exception e) {
+            System.out.println("Error creating cloud bill record: " + e.getMessage());
         }
     }
 

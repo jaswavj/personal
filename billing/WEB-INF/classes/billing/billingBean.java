@@ -11,6 +11,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class billingBean {
 
@@ -687,9 +689,385 @@ ps.executeUpdate();
     
 }
 
+public String saveBillItems(List<ProductItem> items,
+                         String customerName, double finalDiscount,
+                         double payableAmount, double grandTotal,
+                         int uid, double priceTotal, double discountTotal,String customerPhn
+                         	,double totalPaid,double cashPaid,double bankPaid,int mode,int type,double balance,int customerId,int priceCategory,int attenderId,int isTaxBill,String description,int isNewClient,int isCloud) throws Exception {
+    String billNo = saveBillItems(items, customerName, finalDiscount, payableAmount, grandTotal, uid, priceTotal, discountTotal, customerPhn, totalPaid, cashPaid, bankPaid, mode, type, balance, customerId, priceCategory, attenderId, isTaxBill, description, isNewClient);
+    if (isCloud == 1) {
+        int billId = getBillId(billNo);
+        if (billId > 0) {
+            Connection con = null;
+            PreparedStatement ps = null;
+            try {
+                con = util.DBConnectionManager.getConnectionFromPool();
+                ps = con.prepareStatement("UPDATE prod_bill SET is_cloud=1 WHERE id=?");
+                ps.setInt(1, billId);
+                ps.executeUpdate();
+            } finally {
+                if (ps != null) ps.close();
+                if (con != null) con.close();
+            }
+        }
+    }
+    return billNo;
+}
 
+public void createCloudBillRecord(int billId, int customerId) throws Exception {
+    Connection con = null;
+    PreparedStatement ps = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        con.setAutoCommit(false);
+        ps = con.prepareStatement(
+            "INSERT IGNORE INTO prod_cloud_bill (bill_id, customer_id, is_closed) VALUES (?, ?, 0)");
+        ps.setInt(1, billId);
+        ps.setInt(2, customerId);
+        ps.executeUpdate();
+        con.commit();
+    } catch (Exception e) {
+        if (con != null) try { con.rollback(); } catch (Exception ex) {}
+        throw e;
+    } finally {
+        if (ps  != null) try { ps.close();  } catch (Exception ex) {}
+        if (con != null) try { con.setAutoCommit(true); con.close(); } catch (Exception ex) {}
+    }
+}
 
-/*public void saveBillItem(int billId, int productId, int qty, double price, double discount, double total) throws Exception {
+// ===================== CLOUD FEATURE METHODS =====================
+
+public boolean payCloudMonth(int billId, int customerId, int year, int month, double amount) throws Exception {
+    Connection con = null;
+    PreparedStatement ps = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        con.setAutoCommit(false);
+        String sql = "INSERT INTO prod_cloud_bill_payment (bill_id, customer_id, year, month, paid_amount, paid_date, is_paid) " +
+                     "VALUES (?,?,?,?,?,CURDATE(),1) " +
+                     "ON DUPLICATE KEY UPDATE paid_amount=VALUES(paid_amount), paid_date=CURDATE(), is_paid=1";
+        ps = con.prepareStatement(sql);
+        ps.setInt(1, billId);
+        ps.setInt(2, customerId);
+        ps.setInt(3, year);
+        ps.setInt(4, month);
+        ps.setDouble(5, amount);
+        ps.executeUpdate();
+        con.commit();
+        return true;
+    } catch (Exception e) {
+        if (con != null) try { con.rollback(); } catch (Exception ex) {}
+        throw e;
+    } finally {
+        if (ps  != null) try { ps.close();  } catch (Exception ex) {}
+        if (con != null) try { con.setAutoCommit(true); con.close(); } catch (Exception ex) {}
+    }
+}
+
+public boolean closeCloud(int billId) throws Exception {
+    Connection con = null;
+    PreparedStatement ps = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        con.setAutoCommit(false);
+        ps = con.prepareStatement(
+            "UPDATE prod_cloud_bill SET is_closed=1, closed_date=CURDATE() WHERE bill_id=?");
+        ps.setInt(1, billId);
+        ps.executeUpdate();
+        con.commit();
+        return true;
+    } catch (Exception e) {
+        if (con != null) try { con.rollback(); } catch (Exception ex) {}
+        throw e;
+    } finally {
+        if (ps  != null) try { ps.close();  } catch (Exception ex) {}
+        if (con != null) try { con.setAutoCommit(true); con.close(); } catch (Exception ex) {}
+    }
+}
+
+public String getCloudClients() throws Exception {
+    JSONArray arr = new JSONArray();
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        String sql = "SELECT pb.id, pb.bill_display, pb.cusName, pb.cusPhn, pb.customerId, " +
+                     "pb.payable, pb.date, pcb.id as cloud_id, pcb.is_closed, " +
+                     "CASE WHEN cp.id IS NOT NULL THEN 1 ELSE 0 END as paid_this_month " +
+                     "FROM prod_bill pb " +
+                     "LEFT JOIN prod_cloud_bill pcb ON pcb.bill_id = pb.id " +
+                     "LEFT JOIN prod_cloud_bill_payment cp ON cp.bill_id = pb.id " +
+                     "    AND cp.year = YEAR(CURDATE()) AND cp.month = MONTH(CURDATE()) AND cp.is_paid = 1 " +
+                     "WHERE pb.is_cloud = 1 AND pb.is_cancelled = 0 " +
+                     "AND (pcb.is_closed = 0 OR pcb.is_closed IS NULL) " +
+                     "ORDER BY paid_this_month ASC, pb.date DESC";
+        ps = con.prepareStatement(sql);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            JSONObject o = new JSONObject();
+            o.put("billId",        rs.getInt("id"));
+            o.put("billDisplay",   rs.getString("bill_display"));
+            o.put("cusName",       rs.getString("cusName"));
+            o.put("cusPhn",        rs.getString("cusPhn") != null ? rs.getString("cusPhn") : "");
+            o.put("customerId",    rs.getInt("customerId"));
+            o.put("payable",       rs.getDouble("payable"));
+            o.put("date",          rs.getString("date"));
+            o.put("cloudId",       rs.getInt("cloud_id"));
+            o.put("paidThisMonth", rs.getInt("paid_this_month") == 1);
+            arr.put(o);
+        }
+    } finally {
+        if (rs  != null) try { rs.close(); } catch(Exception ex){}
+        if (ps  != null) try { ps.close(); } catch(Exception ex){}
+        if (con != null) try { con.close(); } catch(Exception ex){}
+    }
+    return arr.toString();
+}
+
+public String getClientMonths(int billId, int year) throws Exception {
+    String[] monthNames = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+    JSONObject result = new JSONObject();
+    JSONArray months  = new JSONArray();
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        ps = con.prepareStatement("SELECT is_closed, closed_date FROM prod_cloud_bill WHERE bill_id=?");
+        ps.setInt(1, billId);
+        rs = ps.executeQuery();
+        boolean isClosed = false;
+        String closedDate = "";
+        if (rs.next()) {
+            isClosed   = rs.getInt("is_closed") == 1;
+            closedDate = rs.getString("closed_date") != null ? rs.getString("closed_date") : "";
+        }
+        rs.close(); ps.close();
+        result.put("isClosed",   isClosed);
+        result.put("closedDate", closedDate);
+
+        ps = con.prepareStatement(
+            "SELECT month, paid_amount, paid_date, is_paid FROM prod_cloud_bill_payment " +
+            "WHERE bill_id=? AND year=?");
+        ps.setInt(1, billId);
+        ps.setInt(2, year);
+        rs = ps.executeQuery();
+        Map<Integer, JSONObject> payMap = new HashMap<>();
+        while (rs.next()) {
+            JSONObject m = new JSONObject();
+            m.put("month",      rs.getInt("month"));
+            m.put("paidAmount", rs.getDouble("paid_amount"));
+            m.put("paidDate",   rs.getString("paid_date") != null ? rs.getString("paid_date") : "");
+            m.put("isPaid",     rs.getInt("is_paid") == 1);
+            payMap.put(rs.getInt("month"), m);
+        }
+        rs.close(); ps.close();
+
+        for (int m = 1; m <= 12; m++) {
+            JSONObject mo = new JSONObject();
+            mo.put("month",     m);
+            mo.put("monthName", monthNames[m-1]);
+            if (payMap.containsKey(m)) {
+                JSONObject p = payMap.get(m);
+                mo.put("isPaid",     p.getBoolean("isPaid"));
+                mo.put("paidAmount", p.getDouble("paidAmount"));
+                mo.put("paidDate",   p.getString("paidDate"));
+            } else {
+                mo.put("isPaid",     false);
+                mo.put("paidAmount", 0.0);
+                mo.put("paidDate",   "");
+            }
+            months.put(mo);
+        }
+        result.put("months", months);
+    } finally {
+        if (rs  != null) try { rs.close(); } catch(Exception ex){}
+        if (ps  != null) try { ps.close(); } catch(Exception ex){}
+        if (con != null) try { con.close(); } catch(Exception ex){}
+    }
+    return result.toString();
+}
+
+public String getClientHistory(int billId) throws Exception {
+    String[] monthNames = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+    JSONObject result = new JSONObject();
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        ps = con.prepareStatement("SELECT bill_display, cusName, cusPhn, payable, date FROM prod_bill WHERE id=?");
+        ps.setInt(1, billId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            result.put("billDisplay", rs.getString("bill_display"));
+            result.put("cusName",     rs.getString("cusName"));
+            result.put("cusPhn",      rs.getString("cusPhn") != null ? rs.getString("cusPhn") : "");
+            result.put("payable",     rs.getDouble("payable"));
+            result.put("startDate",   rs.getString("date"));
+        }
+        rs.close(); ps.close();
+
+        ps = con.prepareStatement("SELECT is_closed, closed_date FROM prod_cloud_bill WHERE bill_id=?");
+        ps.setInt(1, billId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            result.put("isClosed",   rs.getInt("is_closed") == 1);
+            result.put("closedDate", rs.getString("closed_date") != null ? rs.getString("closed_date") : "");
+        } else {
+            result.put("isClosed",   false);
+            result.put("closedDate", "");
+        }
+        rs.close(); ps.close();
+
+        ps = con.prepareStatement(
+            "SELECT year, month, paid_amount, paid_date FROM prod_cloud_bill_payment " +
+            "WHERE bill_id=? ORDER BY year DESC, month DESC");
+        ps.setInt(1, billId);
+        rs = ps.executeQuery();
+        JSONArray payments = new JSONArray();
+        while (rs.next()) {
+            JSONObject p = new JSONObject();
+            p.put("year",       rs.getInt("year"));
+            p.put("month",      rs.getInt("month"));
+            p.put("monthName",  monthNames[rs.getInt("month")-1]);
+            p.put("paidAmount", rs.getDouble("paid_amount"));
+            p.put("paidDate",   rs.getString("paid_date") != null ? rs.getString("paid_date") : "");
+            payments.put(p);
+        }
+        result.put("payments", payments);
+    } finally {
+        if (rs  != null) try { rs.close(); } catch(Exception ex){}
+        if (ps  != null) try { ps.close(); } catch(Exception ex){}
+        if (con != null) try { con.close(); } catch(Exception ex){}
+    }
+    return result.toString();
+}
+
+public String getCloudAutocomplete(String query) throws Exception {
+    JSONArray arr = new JSONArray();
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        String sql = "SELECT DISTINCT pb.customerId, pb.cusName, pb.cusPhn, pb.id as bill_id, pb.bill_display " +
+                     "FROM prod_bill pb " +
+                     "WHERE pb.is_cloud=1 AND pb.is_cancelled=0 " +
+                     "AND (pb.cusName LIKE ? OR pb.cusPhn LIKE ?) " +
+                     "ORDER BY pb.cusName LIMIT 10";
+        ps = con.prepareStatement(sql);
+        ps.setString(1, "%" + query.trim() + "%");
+        ps.setString(2, "%" + query.trim() + "%");
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            JSONObject o = new JSONObject();
+            o.put("customerId",  rs.getInt("customerId"));
+            o.put("cusName",     rs.getString("cusName"));
+            o.put("cusPhn",      rs.getString("cusPhn") != null ? rs.getString("cusPhn") : "");
+            o.put("billId",      rs.getInt("bill_id"));
+            o.put("billDisplay", rs.getString("bill_display"));
+            arr.put(o);
+        }
+    } finally {
+        if (rs  != null) try { rs.close(); } catch(Exception ex){}
+        if (ps  != null) try { ps.close(); } catch(Exception ex){}
+        if (con != null) try { con.close(); } catch(Exception ex){}
+    }
+    return arr.toString();
+}
+
+public String getReport2Data(int year) throws Exception {
+    String[] monthNames = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
+    JSONArray arr = new JSONArray();
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        double[] cloudAmounts = new double[13];
+        ps = con.prepareStatement("SELECT month, cloud_amount FROM cloud_paid WHERE year=?");
+        ps.setInt(1, year);
+        rs = ps.executeQuery();
+        while (rs.next()) { cloudAmounts[rs.getInt("month")] = rs.getDouble("cloud_amount"); }
+        rs.close(); ps.close();
+
+        double[] clientPaid  = new double[13];
+        int[]    paidCount   = new int[13];
+        int[]    totalClients = new int[13];
+        ps = con.prepareStatement(
+            "SELECT month, SUM(paid_amount) as total, COUNT(*) as cnt " +
+            "FROM prod_cloud_bill_payment WHERE year=? GROUP BY month");
+        ps.setInt(1, year);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            int m = rs.getInt("month");
+            clientPaid[m] = rs.getDouble("total");
+            paidCount[m]  = rs.getInt("cnt");
+        }
+        rs.close(); ps.close();
+
+        for (int m = 1; m <= 12; m++) {
+            ps = con.prepareStatement(
+                "SELECT COUNT(*) FROM prod_cloud_bill pcb " +
+                "INNER JOIN prod_bill pb ON pb.id = pcb.bill_id " +
+                "WHERE pb.is_cloud=1 AND pb.is_cancelled=0 " +
+                "AND pb.date <= LAST_DAY(?) " +
+                "AND (pcb.is_closed=0 OR pcb.closed_date > LAST_DAY(?))");
+            String monthStr = year + "-" + String.format("%02d", m) + "-01";
+            ps.setString(1, monthStr);
+            ps.setString(2, monthStr);
+            rs = ps.executeQuery();
+            if (rs.next()) totalClients[m] = rs.getInt(1);
+            rs.close(); ps.close();
+        }
+
+        for (int m = 1; m <= 12; m++) {
+            JSONObject row = new JSONObject();
+            row.put("month",        m);
+            row.put("monthName",    monthNames[m-1]);
+            row.put("cloudAmount",  cloudAmounts[m]);
+            row.put("clientPaid",   clientPaid[m]);
+            row.put("paidCount",    paidCount[m]);
+            row.put("totalClients", totalClients[m]);
+            row.put("profit",       clientPaid[m] - cloudAmounts[m]);
+            arr.put(row);
+        }
+    } finally {
+        if (rs  != null) try { rs.close(); } catch(Exception ex){}
+        if (ps  != null) try { ps.close(); } catch(Exception ex){}
+        if (con != null) try { con.close(); } catch(Exception ex){}
+    }
+    return arr.toString();
+}
+
+public boolean saveCloudPaid(int year, int month, double amount) throws Exception {
+    Connection con = null;
+    PreparedStatement ps = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        con.setAutoCommit(false);
+        ps = con.prepareStatement(
+            "INSERT INTO cloud_paid (year, month, cloud_amount, updated_date) VALUES (?,?,?,CURDATE()) " +
+            "ON DUPLICATE KEY UPDATE cloud_amount=VALUES(cloud_amount), updated_date=CURDATE()");
+        ps.setInt(1, year);
+        ps.setInt(2, month);
+        ps.setDouble(3, amount);
+        ps.executeUpdate();
+        con.commit();
+        return true;
+    } catch (Exception e) {
+        if (con != null) try { con.rollback(); } catch (Exception ex) {}
+        throw e;
+    } finally {
+        if (ps  != null) try { ps.close();  } catch (Exception ex) {}
+        if (con != null) try { con.setAutoCommit(true); con.close(); } catch (Exception ex) {}
+    }
+}
+
+// ===================== END CLOUD FEATURE METHODS =====================
+/*
     Connection con = null;
     PreparedStatement ps = null;
 

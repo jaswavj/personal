@@ -699,6 +699,8 @@ function saveBill() {
 
     // Get new client checkbox value
     const isNewClient = (document.getElementById('isNewClient') && document.getElementById('isNewClient').checked) ? 1 : 0;
+    // Get cloud checkbox value
+    const isCloud = (document.getElementById('isCloud') && document.getElementById('isCloud').checked) ? 1 : 0;
 
     // Get selected price category
     const priceCategory = 3;
@@ -741,7 +743,7 @@ function saveBill() {
 
     // Store validated data and open description modal
     window._pendingBill = {
-        customerName, customerId, attenderId, priceCategory, isTaxBill, isNewClient,
+        customerName, customerId, attenderId, priceCategory, isTaxBill, isNewClient, isCloud,
         finalDiscount, payableAmount, grandTotal, priceTotal, discountTotal,
         customerPhn, mode, type, cashPaid, bankPaid, totalPaid, balance
     };
@@ -809,6 +811,7 @@ function doSaveBill() {
             quotationId:  currentQuotationId || 0,
             isEligibleForCommission: 0,
             isNewClient:  b.isNewClient,
+            isCloud:      b.isCloud,
             products:     JSON.stringify(products),
             exchangePointUsed: parseFloat(document.getElementById('exchangePointUsed').value) || 0
         },
