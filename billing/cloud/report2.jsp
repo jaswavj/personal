@@ -27,6 +27,12 @@
         .profit-pos { color:#16a34a;font-weight:700; }
         .profit-neg { color:#dc2626;font-weight:700; }
         .pending-badge { background:#fef3c7;color:#92400e;border-radius:12px;padding:2px 8px;font-size:11px; }
+        .balance-card { background:linear-gradient(135deg,#1e3a5f 0%,#2d5a9e 100%);color:#fff;border-radius:12px;padding:18px 24px;margin-bottom:18px; }
+        .balance-card .bal-title { font-size:13px;opacity:.8;text-transform:uppercase;letter-spacing:.5px; }
+        .balance-card .bal-total { font-size:28px;font-weight:700;margin:4px 0; }
+        .balance-month-row { display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.15);font-size:13px; }
+        .balance-month-row:last-child { border-bottom:none; }
+        .balance-month-row .bal-amt { font-weight:600; }
     </style>
 </head>
 <body>
@@ -45,6 +51,18 @@
             <button class="btn btn-sm btn-outline-primary" onclick="loadReport()">
                 <i class="fas fa-sync-alt me-1"></i>Refresh
             </button>
+        </div>
+    </div>
+
+    <!-- Client Balance Summary (unsettled months only) -->
+    <div class="balance-card" id="balanceSummary" style="display:none">
+        <div class="d-flex align-items-start justify-content-between">
+            <div>
+                <div class="bal-title"><i class="fas fa-wallet me-1"></i>Total Client Balance Due</div>
+                <div class="bal-total" id="balTotal">₹0</div>
+                <div style="font-size:11px;opacity:.7;margin-top:2px">Months with no cloud cost settled</div>
+            </div>
+            <div id="balMonthList" style="min-width:180px;max-width:260px"></div>
         </div>
     </div>
 
@@ -125,6 +143,25 @@ function loadReport() {
         document.getElementById('footCloud').textContent  = '₹' + totalCloud.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
         document.getElementById('footClient').textContent = '₹' + totalClient.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
         document.getElementById('footProfit').innerHTML   = `<span class="${profCls}">₹${totalProfit.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2})}</span>`;
+
+        // Balance summary: only months where cloud cost NOT settled (cloudAmount === 0)
+        const unsettled = data.filter(r => r.cloudAmount === 0 && r.clientPaid > 0);
+        const balanceTotal = unsettled.reduce((s, r) => s + r.clientPaid, 0);
+        const summaryEl = document.getElementById('balanceSummary');
+        if (unsettled.length > 0) {
+            document.getElementById('balTotal').textContent =
+                '₹' + balanceTotal.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
+            document.getElementById('balMonthList').innerHTML =
+                unsettled.map(r =>
+                    `<div class="balance-month-row">
+                        <span>${r.monthName}</span>
+                        <span class="bal-amt">₹${r.clientPaid.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2})}</span>
+                    </div>`
+                ).join('');
+            summaryEl.style.display = '';
+        } else {
+            summaryEl.style.display = 'none';
+        }
     }, 'json');
 }
 
