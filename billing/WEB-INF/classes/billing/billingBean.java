@@ -1805,16 +1805,18 @@ public void saveDuePayment(int billId,
         con = util.DBConnectionManager.getConnectionFromPool();
         con.setAutoCommit(false);  // transaction
 
-        String selectSql = "SELECT paid, currentBalance FROM prod_bill WHERE id = ?";
+        String selectSql = "SELECT paid, currentBalance, bill_display FROM prod_bill WHERE id = ?";
         selectPS = con.prepareStatement(selectSql);
         selectPS.setInt(1, billId);
         rs = selectPS.executeQuery();
 
         double currentPaid = 0;
         double currentBalances = 0;
+        String billDisplay = "";
         if (rs.next()) {
             currentPaid = rs.getDouble("paid");
             currentBalances = rs.getDouble("currentBalance");
+            billDisplay = rs.getString("bill_display");
         } else {
             throw new Exception("Bill not found: " + billId);
         }
@@ -1834,6 +1836,16 @@ public void saveDuePayment(int billId,
         insertPS.setInt(5, mode);
         insertPS.setInt(6, bankOption);
         insertPS.setInt(7,  uid ); 
+        insertPS.executeUpdate();
+        insertPS.close();
+
+        // Insert into prod_ledger (is_receipt=1 for balance collection)
+        String sqlLedger = "INSERT INTO prod_ledger (entry_date_time, content, amount, is_receipt, ref_id, uid) VALUES (NOW(), ?, ?, 1, ?, ?)";
+        insertPS = con.prepareStatement(sqlLedger);
+        insertPS.setString(1, "Balance Collection #" + billDisplay);
+        insertPS.setDouble(2, payNow);
+        insertPS.setInt(3, billId);
+        insertPS.setInt(4, uid);
         insertPS.executeUpdate();
 
         String updateSql = "UPDATE prod_bill SET  currentBalance = ? WHERE id = ?";
