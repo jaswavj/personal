@@ -42,12 +42,12 @@ CREATE TABLE `cloud_paid` (
   `updated_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_year_month` (`year`,`month`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `cloud_paid` */
 
 insert  into `cloud_paid`(`id`,`year`,`month`,`cloud_amount`,`updated_date`) values 
-(2,2026,5,0,'2026-05-25'),
+(2,2026,5,0,'2026-05-27'),
 (13,2026,6,0,'2026-05-25');
 
 /*Table structure for table `company_details` */
@@ -461,7 +461,7 @@ insert  into `prod_bill`(`id`,`bill_display`,`is_tax_bill`,`is_receipt`,`total`,
 (15,'26-12',1,1,6000.000,0.000,0.000,6000.000,6000.000,0.000,0.000,0,2,1,1,'2026-05-02','11:53:53',0,1,'Bike inventory','9342217202',13,3,NULL,NULL,NULL,NULL,'ref by saran',1,0),
 (16,'26-13',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-05-07','11:54:29',0,1,'Guna Gifts(800)','9940125902',14,3,NULL,NULL,NULL,NULL,'insta ads \nonine - 800',1,1),
 (17,'26-14',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-05-15','11:55:02',0,1,'Kingston wholesale(550)','7010122543',15,3,NULL,NULL,NULL,NULL,'ref by kingston\nonline -550',1,1),
-(18,'26-15',1,1,6000.000,0.000,0.000,6000.000,6000.000,4000.000,0.000,1,2,1,1,'2026-05-18','15:57:46',0,1,'Moulana Travels(600)','9715825688',18,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600 mnt',1,1),
+(18,'26-15',1,1,7000.000,0.000,0.000,7000.000,7000.000,5000.000,0.000,1,2,1,1,'2026-05-18','15:57:46',0,1,'Moulana Travels(600)','9715825688',18,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600 mnt',1,1),
 (19,'26-16',1,1,200.000,0.000,0.000,200.000,200.000,0.000,0.000,0,2,1,1,'2026-03-13','10:24:01',0,1,'VETRI MOBILES & HOME APPLIANCES','9384338182',3,3,NULL,NULL,NULL,NULL,'SMALL WORKS',0,0);
 
 /*Table structure for table `prod_bill_cancel` */
@@ -542,7 +542,7 @@ insert  into `prod_bill_details`(`id`,`bill_id`,`prod_id`,`qty`,`price`,`disc`,`
 (15,15,1,1.00,6000.000,0.000,6000.000,0.000,0.000,0,0,NULL,0),
 (16,16,1,1.00,5000.000,0.000,5000.000,0.000,0.000,0,0,NULL,0),
 (17,17,1,1.00,3000.000,0.000,3000.000,0.000,0.000,0,0,NULL,0),
-(18,18,1,1.00,6000.000,0.000,6000.000,0.000,0.000,0,0,NULL,0),
+(18,18,1,1.00,7000.000,0.000,7000.000,0.000,0.000,0,0,NULL,0),
 (19,19,4,1.00,200.000,0.000,200.000,0.000,0.000,0,0,NULL,0);
 
 /*Table structure for table `prod_bill_due_collection` */
@@ -569,7 +569,7 @@ CREATE TABLE `prod_bill_due_collection` (
 /*Data for the table `prod_bill_due_collection` */
 
 insert  into `prod_bill_due_collection`(`id`,`bill_id`,`balance`,`paid`,`finalBalance`,`mode`,`bankOption`,`uid`,`collectDate`,`collectTime`,`date`,`time`) values 
-(1,18,4000.00,4000.00,0.00,2,1,1,'2026-05-20','17:59:58','2026-05-20','17:59:58');
+(1,18,5000.00,5000.00,0.00,2,1,1,'2026-05-20','17:59:58','2026-05-20','17:59:58');
 
 /*Table structure for table `prod_bill_payment` */
 
@@ -811,7 +811,7 @@ CREATE TABLE `prod_cloud_bill_payment` (
   `is_paid` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_bill_year_month` (`bill_id`,`year`,`month`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_cloud_bill_payment` */
 
@@ -820,7 +820,9 @@ insert  into `prod_cloud_bill_payment`(`id`,`bill_id`,`customer_id`,`year`,`mont
 (4,17,15,2026,6,550,'2026-05-19',1),
 (5,17,15,2026,7,550,'2026-05-19',1),
 (6,16,14,2026,5,500,'2026-05-19',1),
-(7,16,14,2026,6,500,'2026-05-19',1);
+(7,16,14,2026,6,500,'2026-05-19',1),
+(8,18,18,2026,6,300,'2026-05-27',1),
+(9,18,18,2026,5,300,'2026-05-27',1);
 
 /*Table structure for table `prod_ledger` */
 
@@ -842,7 +844,7 @@ CREATE TABLE `prod_ledger` (
 insert  into `prod_ledger`(`id`,`entry_date_time`,`content`,`amount`,`is_receipt`,`ref_id`,`uid`) values 
 (1,'2026-05-18 16:51:18','OLD BALANCE',8750.00,1,1,1),
 (2,'2026-05-19 10:47:00','ads',500.00,0,10,1),
-(4,'2026-05-20 10:47:00','Balance Collection # 26-16',4000.00,1,1,1),
+(4,'2026-05-20 10:47:00','Balance Collection # 26-16',5000.00,1,1,1),
 (5,'2026-05-26 17:27:00','BIKES SERVICE',5970.00,0,11,1);
 
 /*Table structure for table `prod_lifecycle` */
