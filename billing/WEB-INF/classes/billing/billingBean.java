@@ -668,7 +668,7 @@ ps.executeUpdate();
         String sqlLedger = "INSERT INTO prod_ledger (entry_date_time, content, amount, is_receipt, ref_id, uid) VALUES (NOW(), ?, ?, 1, ?, ?)";
         ps = con.prepareStatement(sqlLedger);
         ps.setString(1, "Bill #" + billNo);
-        ps.setDouble(2, payableAmount);
+        ps.setDouble(2, totalPaid);
         ps.setInt(3, billId);
         ps.setInt(4, uid);
         ps.executeUpdate();
@@ -705,6 +705,7 @@ public String saveBillItems(List<ProductItem> items,
                 ps = con.prepareStatement("UPDATE prod_bill SET is_cloud=1 WHERE id=?");
                 ps.setInt(1, billId);
                 ps.executeUpdate();
+                con.commit();
             } finally {
                 if (ps != null) ps.close();
                 if (con != null) con.close();
@@ -794,11 +795,16 @@ public String getCloudClients() throws Exception {
         con = util.DBConnectionManager.getConnectionFromPool();
         String sql = "SELECT pb.id, pb.bill_display, pb.cusName, pb.cusPhn, pb.customerId, " +
                      "pb.payable, pb.date, pcb.id as cloud_id, pcb.is_closed, " +
-                     "CASE WHEN cp.id IS NOT NULL THEN 1 ELSE 0 END as paid_this_month " +
+                     "CASE WHEN cp.id IS NOT NULL THEN 1 ELSE 0 END as paid_this_month, " +
+                     "CASE WHEN cp2.id IS NOT NULL THEN 1 ELSE 0 END as paid_next_month " +
                      "FROM prod_bill pb " +
                      "LEFT JOIN prod_cloud_bill pcb ON pcb.bill_id = pb.id " +
                      "LEFT JOIN prod_cloud_bill_payment cp ON cp.bill_id = pb.id " +
                      "    AND cp.year = YEAR(CURDATE()) AND cp.month = MONTH(CURDATE()) AND cp.is_paid = 1 " +
+                     "LEFT JOIN prod_cloud_bill_payment cp2 ON cp2.bill_id = pb.id " +
+                     "    AND cp2.year = CASE WHEN MONTH(CURDATE()) = 12 THEN YEAR(CURDATE()) + 1 ELSE YEAR(CURDATE()) END " +
+                     "    AND cp2.month = CASE WHEN MONTH(CURDATE()) = 12 THEN 1 ELSE MONTH(CURDATE()) + 1 END " +
+                     "    AND cp2.is_paid = 1 " +
                      "WHERE pb.is_cloud = 1 AND pb.is_cancelled = 0 " +
                      "AND (pcb.is_closed = 0 OR pcb.is_closed IS NULL) " +
                      "ORDER BY paid_this_month ASC, pb.date DESC";
@@ -815,6 +821,7 @@ public String getCloudClients() throws Exception {
             o.put("date",          rs.getString("date"));
             o.put("cloudId",       rs.getInt("cloud_id"));
             o.put("paidThisMonth", rs.getInt("paid_this_month") == 1);
+            o.put("paidNextMonth", rs.getInt("paid_next_month") == 1);
             arr.put(o);
         }
     } finally {

@@ -42,12 +42,12 @@ CREATE TABLE `cloud_paid` (
   `updated_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_year_month` (`year`,`month`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `cloud_paid` */
 
 insert  into `cloud_paid`(`id`,`year`,`month`,`cloud_amount`,`updated_date`) values 
-(2,2026,5,0,'2026-05-27'),
+(2,2026,5,0,'2026-05-29'),
 (13,2026,6,0,'2026-05-25');
 
 /*Table structure for table `company_details` */
@@ -144,7 +144,7 @@ CREATE TABLE `customers` (
   `local` int DEFAULT '1',
   `exchange_point` double(10,3) DEFAULT '0.000',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `customers` */
 
@@ -166,7 +166,8 @@ insert  into `customers`(`id`,`name`,`phone_number`,`address`,`date`,`time`,`is_
 (15,'Kingston wholesale(550)','7010122543','nagercoil','2026-05-18','11:44:36',0,1,'',0,NULL,NULL,0.00,1,0.000),
 (16,'javera clothing','9343201020','4,TSMO Syed Ali Nagar Kurichi Main Road Tirunelveli-627005','2026-05-18','11:49:39',0,1,'',0,NULL,NULL,0.00,1,0.000),
 (17,'Somnath agro machine','9597949332','','2026-05-18','11:49:57',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(18,'MOULANA(600)','9715825688','ORATHANADU','2026-05-18','15:57:46',0,1,'',0,NULL,NULL,0.00,1,0.000);
+(18,'MOULANA(600)','9715825688','ORATHANADU','2026-05-18','15:57:46',0,1,'',0,NULL,NULL,0.00,1,0.000),
+(19,'Teabench puther(600)','6383798553','','2026-05-29','10:04:56',0,1,'',0,NULL,NULL,0.00,1,0.000);
 
 /*Table structure for table `customers_exchange_point` */
 
@@ -374,7 +375,7 @@ CREATE TABLE `prod_batch_zero_stock_bill` (
   KEY `batch` (`batch_id`),
   KEY `prod` (`product_id`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_batch_zero_stock_bill` */
 
@@ -397,7 +398,8 @@ insert  into `prod_batch_zero_stock_bill`(`id`,`batch_id`,`product_id`,`qty`,`da
 (16,'1',1,1.00,'2026-05-18','11:54:29',1),
 (17,'1',1,1.00,'2026-05-18','11:55:03',1),
 (18,'1',1,1.00,'2026-05-18','15:57:46',1),
-(19,'4',4,1.00,'2026-05-20','10:24:01',1);
+(19,'4',4,1.00,'2026-05-20','10:24:01',1),
+(20,'1',1,1.00,'2026-05-29','10:04:57',1);
 
 /*Table structure for table `prod_bill` */
 
@@ -439,7 +441,7 @@ CREATE TABLE `prod_bill` (
   KEY `mode` (`paymentMode`),
   KEY `type` (`paymentType`),
   KEY `idx_is_tax_bill` (`is_tax_bill`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_bill` */
 
@@ -454,7 +456,7 @@ insert  into `prod_bill`(`id`,`bill_display`,`is_tax_bill`,`is_receipt`,`total`,
 (8,'26-5',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-02-07','11:48:58',0,1,'Everyday Restro Cafe','9994209494',8,3,NULL,NULL,NULL,NULL,'insta ads\nonline -900',1,0),
 (9,'26-6',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-02-13','11:50:43',0,1,'javera clothing','9343201020',16,3,NULL,NULL,NULL,NULL,'insta ads',1,0),
 (10,'26-7',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:51:19',0,1,'Somnath agro machine','9597949332',17,3,NULL,NULL,NULL,NULL,'referred by 26-5\r\n7k and 2k for referral to 26-5',1,0),
-(11,'26-8',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:52:04',0,1,'AJ Computer centre','9976030500',9,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600',1,0),
+(11,'26-8',1,1,2000.000,0.000,0.000,2000.000,2000.000,0.000,0.000,0,2,1,1,'2026-02-27','11:52:04',0,1,'AJ Computer centre(loopbikes cloud follow 1000)','9976030500',9,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600',1,1),
 (12,'26-9',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,1,0,1,'2026-03-09','11:52:46',0,1,'mapla menswear','9047476247',10,3,NULL,NULL,NULL,NULL,'referred by kingston',1,0),
 (13,'26-10',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-03-14','11:53:08',0,1,'mohana electrical pudukottai','8122122150',11,3,NULL,NULL,NULL,NULL,'insta ads',1,0),
 (14,'26-11',1,1,4000.000,0.000,0.000,4000.000,4000.000,0.000,0.000,0,2,1,1,'2026-04-17','11:53:26',0,1,'JAngel rehoboth clothing chennai','8056191358',12,3,NULL,NULL,NULL,NULL,'insta ads',1,0),
@@ -462,7 +464,8 @@ insert  into `prod_bill`(`id`,`bill_display`,`is_tax_bill`,`is_receipt`,`total`,
 (16,'26-13',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,2,1,1,'2026-05-07','11:54:29',0,1,'Guna Gifts(800)','9940125902',14,3,NULL,NULL,NULL,NULL,'insta ads \nonine - 800',1,1),
 (17,'26-14',1,1,3000.000,0.000,0.000,3000.000,3000.000,0.000,0.000,0,2,1,1,'2026-05-15','11:55:02',0,1,'Kingston wholesale(550)','7010122543',15,3,NULL,NULL,NULL,NULL,'ref by kingston\nonline -550',1,1),
 (18,'26-15',1,1,7000.000,0.000,0.000,7000.000,7000.000,5000.000,0.000,1,2,1,1,'2026-05-18','15:57:46',0,1,'Moulana Travels(600)','9715825688',18,3,NULL,NULL,NULL,NULL,'insta ads\nonline - 600 mnt',1,1),
-(19,'26-16',1,1,200.000,0.000,0.000,200.000,200.000,0.000,0.000,0,2,1,1,'2026-03-13','10:24:01',0,1,'VETRI MOBILES & HOME APPLIANCES','9384338182',3,3,NULL,NULL,NULL,NULL,'SMALL WORKS',0,0);
+(19,'26-16',1,1,200.000,0.000,0.000,200.000,200.000,0.000,0.000,0,2,1,1,'2026-03-13','10:24:01',0,1,'VETRI MOBILES & HOME APPLIANCES','9384338182',3,3,NULL,NULL,NULL,NULL,'SMALL WORKS',0,0),
+(20,'26-17',1,1,5000.000,0.000,0.000,5000.000,4000.000,1000.000,1000.000,1,2,1,1,'2026-05-29','10:04:57',0,1,'Teabench puther(600)','6383798553',19,3,NULL,NULL,NULL,NULL,'referred by kingston\nonline',1,1);
 
 /*Table structure for table `prod_bill_cancel` */
 
@@ -520,7 +523,7 @@ CREATE TABLE `prod_bill_details` (
   PRIMARY KEY (`id`),
   KEY `bill` (`bill_id`),
   KEY `prod` (`prod_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_bill_details` */
 
@@ -543,7 +546,8 @@ insert  into `prod_bill_details`(`id`,`bill_id`,`prod_id`,`qty`,`price`,`disc`,`
 (16,16,1,1.00,5000.000,0.000,5000.000,0.000,0.000,0,0,NULL,0),
 (17,17,1,1.00,3000.000,0.000,3000.000,0.000,0.000,0,0,NULL,0),
 (18,18,1,1.00,7000.000,0.000,7000.000,0.000,0.000,0,0,NULL,0),
-(19,19,4,1.00,200.000,0.000,200.000,0.000,0.000,0,0,NULL,0);
+(19,19,4,1.00,200.000,0.000,200.000,0.000,0.000,0,0,NULL,0),
+(20,20,1,1.00,5000.000,0.000,5000.000,0.000,0.000,0,0,NULL,0);
 
 /*Table structure for table `prod_bill_due_collection` */
 
@@ -584,7 +588,7 @@ CREATE TABLE `prod_bill_payment` (
   PRIMARY KEY (`id`),
   KEY `billid` (`bill_id`),
   KEY `paymentType` (`paymentType`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_bill_payment` */
 
@@ -607,7 +611,8 @@ insert  into `prod_bill_payment`(`id`,`bill_id`,`cash`,`bank`,`paymentType`) val
 (16,16,0.00,5000.00,1),
 (17,17,0.00,3000.00,1),
 (18,18,0.00,2000.00,1),
-(19,19,0.00,200.00,1);
+(19,19,0.00,200.00,1),
+(20,20,0.00,4000.00,1);
 
 /*Table structure for table `prod_bill_payment_mode` */
 
@@ -792,9 +797,12 @@ CREATE TABLE `prod_cloud_bill` (
   `closed_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_bill_id` (`bill_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_cloud_bill` */
+
+insert  into `prod_cloud_bill`(`id`,`bill_id`,`customer_id`,`is_closed`,`closed_date`) values 
+(1,20,19,0,NULL);
 
 /*Table structure for table `prod_cloud_bill_payment` */
 
@@ -811,7 +819,7 @@ CREATE TABLE `prod_cloud_bill_payment` (
   `is_paid` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_bill_year_month` (`bill_id`,`year`,`month`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_cloud_bill_payment` */
 
@@ -822,7 +830,8 @@ insert  into `prod_cloud_bill_payment`(`id`,`bill_id`,`customer_id`,`year`,`mont
 (6,16,14,2026,5,500,'2026-05-19',1),
 (7,16,14,2026,6,500,'2026-05-19',1),
 (8,18,18,2026,6,300,'2026-05-27',1),
-(9,18,18,2026,5,300,'2026-05-27',1);
+(9,18,18,2026,5,300,'2026-05-27',1),
+(10,11,9,2026,5,1000,'2026-05-29',1);
 
 /*Table structure for table `prod_ledger` */
 
@@ -837,7 +846,7 @@ CREATE TABLE `prod_ledger` (
   `ref_id` int DEFAULT NULL COMMENT 'bill_id or expense_entry_id',
   `uid` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_ledger` */
 
@@ -845,7 +854,8 @@ insert  into `prod_ledger`(`id`,`entry_date_time`,`content`,`amount`,`is_receipt
 (1,'2026-05-18 16:51:18','OLD BALANCE',8750.00,1,1,1),
 (2,'2026-05-19 10:47:00','ads',500.00,0,10,1),
 (4,'2026-05-20 10:47:00','Balance Collection # 26-16',5000.00,1,1,1),
-(5,'2026-05-26 17:27:00','BIKES SERVICE',5970.00,0,11,1);
+(5,'2026-05-26 17:27:00','BIKES SERVICE',5970.00,0,11,1),
+(6,'2026-05-29 10:04:57','Bill #26-17',4000.00,1,20,1);
 
 /*Table structure for table `prod_lifecycle` */
 
@@ -872,7 +882,7 @@ CREATE TABLE `prod_lifecycle` (
   KEY `uid` (`uid`),
   KEY `stock` (`stockAdjType`),
   KEY `billId` (`bill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_lifecycle` */
 
@@ -899,7 +909,8 @@ insert  into `prod_lifecycle`(`id`,`bill_id`,`batch_id`,`product_id`,`stock_in`,
 (20,16,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-05-18','15:57:46',1,1,0),
 (21,0,3,3,0.00,0.00,0.00,0,'WHILE ADD PRODUCT','2026-05-20','10:09:53',1,1,0),
 (22,0,4,4,0.00,0.00,0.00,0,'WHILE ADD PRODUCT','2026-05-20','10:23:19',1,1,0),
-(23,16,4,4,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-05-20','10:24:01',1,1,0);
+(23,16,4,4,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-05-20','10:24:01',1,1,0),
+(24,20,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-05-29','10:04:57',1,1,0);
 
 /*Table structure for table `prod_order` */
 
