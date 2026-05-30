@@ -66,9 +66,10 @@
             box-shadow: 0 1px 6px rgba(0,0,0,.07);
             border-left: 4px solid var(--primary);
         }
-        .s-card.expense { border-left-color: var(--orange); }
-        .s-card.profit  { border-left-color: var(--green); }
-        .s-card.clients { border-left-color: #3b82f6; }
+        .s-card.expense     { border-left-color: var(--orange); }
+        .s-card.profit       { border-left-color: var(--green); }
+        .s-card.clients      { border-left-color: #3b82f6; }
+        .s-card.service      { border-left-color: #8b5cf6; }
         .s-card-label { font-size: .75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
         .s-card-value { font-size: 1.3rem; font-weight: 700; color: #0f172a; margin-top: 4px; }
 
@@ -167,9 +168,14 @@
 
         <!-- Summary Cards -->
         <div class="summary-cards" id="summaryCards">
-            <div class="s-card clients"><div class="s-card-label">Total Clients</div><div class="s-card-value" id="sumClients">—</div></div>
+            <div class="s-card clients"><div class="s-card-label">Total Client</div><div class="s-card-value" id="sumClients">—</div></div>
             <div class="s-card"><div class="s-card-label">Total Sales</div><div class="s-card-value" id="sumSales">—</div></div>
             <div class="s-card expense"><div class="s-card-label">Total Expense</div><div class="s-card-value" id="sumExpense">—</div></div>
+            <div class="s-card service">
+                <div class="s-card-label">Service Work</div>
+                <div class="s-card-value" id="sumServiceCount">—</div>
+                <div style="font-size:.78rem;color:#64748b;margin-top:3px;">Amt: <span id="sumServiceAmount" style="font-weight:700;color:#0f172a;">—</span></div>
+            </div>
             <div class="s-card profit"><div class="s-card-label">Net Profit</div><div class="s-card-value" id="sumProfit">—</div></div>
         </div>
 
@@ -248,9 +254,14 @@
         const totalExp = rows.reduce((a, r) => a + parseFloat(r.expense), 0);
         const totalProfit = rows.reduce((a, r) => a + parseFloat(r.profit), 0);
         document.getElementById('sumExpense').textContent = '₹' + fmt(totalExp);
+        const totalServiceCount  = rows.reduce((a, r) => a + parseInt(r.serviceCount  || 0), 0);
+        const totalServiceAmount = rows.reduce((a, r) => a + parseFloat(r.serviceAmount || 0), 0);
+        const netProfit = totalProfit + totalServiceAmount;
         const profEl = document.getElementById('sumProfit');
-        profEl.textContent = '₹' + fmt(totalProfit);
-        profEl.style.color = totalProfit >= 0 ? 'var(--green)' : 'var(--red)';
+        profEl.textContent = '₹' + fmt(netProfit);
+        profEl.style.color = netProfit >= 0 ? 'var(--green)' : 'var(--red)';
+        document.getElementById('sumServiceCount').textContent = totalServiceCount + ' bills';
+        document.getElementById('sumServiceAmount').textContent = '₹' + fmt(totalServiceAmount);
     }
 
     function renderTable(rows) {

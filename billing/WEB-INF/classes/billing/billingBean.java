@@ -6563,7 +6563,7 @@ public Vector getYearlySalesData(int year) throws Exception {
             "      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 " +
             "      UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) AS nums " +
             "LEFT JOIN prod_bill pb ON MONTH(pb.date)=nums.m AND YEAR(pb.date)=? " +
-            "  AND (pb.is_cancelled IS NULL OR pb.is_cancelled=0) " +
+            "  AND pb.is_new_client=1 AND pb.is_cancelled=0 " +
             "GROUP BY nums.m ORDER BY nums.m"
         );
         ps.setInt(1, year);
@@ -6596,7 +6596,7 @@ public Vector getYearlyExpenseData(int year) throws Exception {
             "      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 " +
             "      UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) AS nums " +
             "LEFT JOIN expense_entry ee ON MONTH(ee.exc_date_time)=nums.m AND YEAR(ee.exc_date_time)=? " +
-            "  AND ee.is_active=1 " +
+            "  AND ee.is_active=1 AND ee.exp_type!=2 " +
             "GROUP BY nums.m ORDER BY nums.m"
         );
         ps.setInt(1, year);
@@ -6624,7 +6624,7 @@ public Vector getAllYearsSalesData() throws Exception {
         Vector vec = new Vector();
         ps = con.prepareStatement(
             "SELECT YEAR(pb.date) AS yr, COUNT(pb.id) AS clients, COALESCE(SUM(pb.payable),0) AS total_sales " +
-            "FROM prod_bill pb WHERE (pb.is_cancelled IS NULL OR pb.is_cancelled=0) " +
+            "FROM prod_bill pb WHERE pb.is_new_client=1 AND pb.is_cancelled=0 " +
             "GROUP BY yr ORDER BY yr"
         );
         rs = ps.executeQuery();
@@ -6652,7 +6652,7 @@ public Vector getAllYearsExpenseData() throws Exception {
         Vector vec = new Vector();
         ps = con.prepareStatement(
             "SELECT YEAR(ee.exc_date_time) AS yr, COALESCE(SUM(ee.amount),0) AS total_expense " +
-            "FROM expense_entry ee WHERE ee.is_active=1 " +
+            "FROM expense_entry ee WHERE ee.is_active=1 AND ee.exp_type!=2 " +
             "GROUP BY yr ORDER BY yr"
         );
         rs = ps.executeQuery();
@@ -6660,6 +6660,67 @@ public Vector getAllYearsExpenseData() throws Exception {
             Vector row = new Vector();
             row.addElement(rs.getInt(1));    // year
             row.addElement(rs.getDouble(2)); // total expense
+            vec.addElement(row);
+        }
+        return vec;
+    } finally {
+        if (rs  != null) try { rs.close();  } catch (Exception e) {}
+        if (ps  != null) try { ps.close();  } catch (Exception e) {}
+        if (con != null) try { con.close(); } catch (Exception e) {}
+    }
+}
+
+public Vector getYearlyServiceData(int year) throws Exception {
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        Vector vec = new Vector();
+        ps = con.prepareStatement(
+            "SELECT nums.m, COALESCE(COUNT(pb.id),0) AS svc_count, COALESCE(SUM(pb.paid),0) AS svc_amount " +
+            "FROM (SELECT 1 AS m UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 " +
+            "      UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 " +
+            "      UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) AS nums " +
+            "LEFT JOIN prod_bill pb ON MONTH(pb.date)=nums.m AND YEAR(pb.date)=? " +
+            "  AND pb.is_new_client=0 AND pb.is_cancelled=0 " +
+            "GROUP BY nums.m ORDER BY nums.m"
+        );
+        ps.setInt(1, year);
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Vector row = new Vector();
+            row.addElement(rs.getInt(1));     // month number 1-12
+            row.addElement(rs.getLong(2));    // service count
+            row.addElement(rs.getDouble(3));  // service amount
+            vec.addElement(row);
+        }
+        return vec;
+    } finally {
+        if (rs  != null) try { rs.close();  } catch (Exception e) {}
+        if (ps  != null) try { ps.close();  } catch (Exception e) {}
+        if (con != null) try { con.close(); } catch (Exception e) {}
+    }
+}
+
+public Vector getAllYearsServiceData() throws Exception {
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        Vector vec = new Vector();
+        ps = con.prepareStatement(
+            "SELECT YEAR(pb.date) AS yr, COUNT(pb.id) AS svc_count, COALESCE(SUM(pb.paid),0) AS svc_amount " +
+            "FROM prod_bill pb WHERE pb.is_new_client=0 AND pb.is_cancelled=0 " +
+            "GROUP BY yr ORDER BY yr"
+        );
+        rs = ps.executeQuery();
+        while (rs.next()) {
+            Vector row = new Vector();
+            row.addElement(rs.getInt(1));    // year
+            row.addElement(rs.getLong(2));   // service count
+            row.addElement(rs.getDouble(3)); // service amount
             vec.addElement(row);
         }
         return vec;
