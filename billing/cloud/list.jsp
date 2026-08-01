@@ -149,8 +149,9 @@ function loadClients() {
             return;
         }
         document.getElementById('clientCount').textContent = data.length + ' active';
+        const dayOfMonth = new Date().getDate();
         tbody.innerHTML = data.map((r,i) => {
-            const unpaid = !r.paidThisMonth || !r.paidNextMonth;
+            const unpaid = !r.paidThisMonth || (dayOfMonth > 27 && !r.paidNextMonth);
             const rowCls = unpaid ? ' class="row-unpaid"' : '';
             const statusBadge = unpaid
                 ? `<span class="badge-unpaid"><i class="fas fa-exclamation-circle me-1"></i>Unpaid</span>`
