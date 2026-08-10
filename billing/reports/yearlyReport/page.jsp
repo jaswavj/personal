@@ -321,9 +321,14 @@
 
     function renderCharts(rows) {
         const labels = rows.map(r => r.month);
-        const sales   = rows.map(r => parseFloat(r.sales));
+        const svcCloud = rows.map(r => parseFloat(r.serviceAmount || 0) + parseFloat(r.cloudAmount || 0));
+        const salesOnly = rows.map(r => parseFloat(r.sales));
         const expense = rows.map(r => parseFloat(r.expense));
-        const cumSales  = rows.map(r => parseFloat(r.cumSales));
+        let runSvcCloud = 0;
+        const cumSales  = rows.map(r => {
+            runSvcCloud += parseFloat(r.serviceAmount || 0) + parseFloat(r.cloudAmount || 0);
+            return parseFloat(r.cumSales) + runSvcCloud;
+        });
         const cumInv = rows.map(r => parseFloat(r.cumExpense));
 
         // Cumulative chart (line)
@@ -334,7 +339,7 @@
                 labels,
                 datasets: [
                     {
-                        label: 'Overall Sale (₹)',
+                        label: 'Overall Sale + Service/Cloud (₹)',
                         data: cumSales,
                         borderColor: '#5c4d8a',
                         backgroundColor: 'rgba(92,77,138,.12)',
@@ -375,19 +380,27 @@
                 datasets: [
                     {
                         label: 'Sale (₹)',
-                        data: sales,
+                        data: salesOnly,
                         backgroundColor: 'rgba(92,77,138,.8)',
                         borderRadius: 4,
-                        barPercentage: 0.55,
-                        categoryPercentage: 0.7
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.75
+                    },
+                    {
+                        label: 'Service/Cloud (₹)',
+                        data: svcCloud,
+                        backgroundColor: 'rgba(6,182,212,.85)',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.75
                     },
                     {
                         label: 'Ads/Expense (₹)',
                         data: expense,
                         backgroundColor: 'rgba(249,115,22,.8)',
                         borderRadius: 4,
-                        barPercentage: 0.55,
-                        categoryPercentage: 0.7
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.75
                     }
                 ]
             },
