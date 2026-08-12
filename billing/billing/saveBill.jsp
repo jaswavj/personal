@@ -21,7 +21,10 @@ try {
 
     String customerName = request.getParameter("customerName");
     String customerPhn = request.getParameter("customerPhn");
+    String districtName = request.getParameter("districtName");
     int customerId = 0;
+    
+    if (districtName == null) districtName = "";
     
     // Get customerId from request
     String customerIdStr = request.getParameter("customerId");
@@ -38,17 +41,23 @@ try {
     
     // If customer name is provided and not "-", handle customer logic
     if (customerName != null && !customerName.equals("-") && !customerName.trim().isEmpty()) {
+        int districtId = 0;
+        if (districtName != null && !districtName.trim().isEmpty()) {
+            districtId = prod.resolveDistrictId(districtName);
+        }
+
         if (customerId == 0) {
-            // Customer name typed but not selected from autocomplete
-            // Check if customer exists
             int existingCustomerId = prod.checkTheCustomerNameExist(customerName);
             if (existingCustomerId != 0) {
                 customerId = existingCustomerId;
             } else {
-                // Insert new customer
-                prod.AddCustomer(customerName, "", customerPhn, "", 0, isEligibleForCommission);
+                prod.AddCustomer(customerName, "", customerPhn, "", 0, isEligibleForCommission, districtId);
                 customerId = prod.checkTheCustomerNameExist(customerName);
             }
+        }
+
+        if (customerId > 0 && districtId > 0) {
+            prod.updateCustomerDistrict(customerId, districtId);
         }
     }
     

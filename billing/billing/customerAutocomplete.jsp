@@ -32,6 +32,7 @@
             obj.put("isGst", customer.elementAt(6));
             obj.put("isEligibleForCommission", customer.elementAt(7));
             obj.put("exchangePoint", customer.size() > 8 ? customer.elementAt(8) : 0);
+            obj.put("district", customer.size() > 9 ? customer.elementAt(9) : "-");
             
             results.put(obj);
         }

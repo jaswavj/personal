@@ -2274,6 +2274,10 @@ finally
 // Customer Management Methods
 ///////////////////////////////--------------------------
 public void AddCustomer(String name,String custAddress,String custPhn,String gstin, int isGst, int isEligibleForCommission) throws Exception {
+    AddCustomer(name, custAddress, custPhn, gstin, isGst, isEligibleForCommission, 0);
+}
+
+public void AddCustomer(String name,String custAddress,String custPhn,String gstin, int isGst, int isEligibleForCommission, int districtId) throws Exception {
     Connection con = null;
     PreparedStatement pt = null;
 
@@ -2281,7 +2285,7 @@ public void AddCustomer(String name,String custAddress,String custPhn,String gst
         con = util.DBConnectionManager.getConnectionFromPool();
         con.setAutoCommit(false); // IMPORTANT
 
-        String sql = "INSERT INTO customers(name, date, time, address, phone_number, gstin, is_gst, is_eligible_for_commission) VALUES (?, NOW(), NOW(), ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO customers(name, date, time, address, phone_number, gstin, is_gst, is_eligible_for_commission, district_id) VALUES (?, NOW(), NOW(), ?, ?, ?, ?, ?, ?)";
         pt = con.prepareStatement(sql);
         pt.setString(1, name);
 		pt.setString(2, custAddress);
@@ -2289,6 +2293,8 @@ public void AddCustomer(String name,String custAddress,String custPhn,String gst
 		pt.setString(4, gstin);
 		pt.setInt(5, isGst);
 		pt.setInt(6, isEligibleForCommission);
+		if (districtId > 0) pt.setInt(7, districtId);
+		else pt.setNull(7, java.sql.Types.INTEGER);
 		
         int rows = pt.executeUpdate();
         if (rows > 0) {
@@ -2320,13 +2326,17 @@ public Vector getCustomerDetails() throws Exception
 		
 	Vector major = new Vector();
 
-	pt = con.prepareStatement("SELECT name,id, "
-							 +"   CASE WHEN address = '' OR address IS NULL THEN '-' ELSE address END AS address, "
-							+"    CASE WHEN phone_number = '' OR phone_number IS NULL THEN '-' ELSE phone_number END AS phone_number, "
-							+"    CASE WHEN gstin = '' OR gstin IS NULL THEN '-' ELSE gstin END AS gstin, "
-							+"    COALESCE(is_gst, 0), COALESCE(is_eligible_for_commission, 0) "
-					+"		FROM customers "
-					+"		WHERE is_active = 1;");
+	pt = con.prepareStatement("SELECT c.name, c.id, "
+							 +"   CASE WHEN c.address = '' OR c.address IS NULL THEN '-' ELSE c.address END AS address, "
+							+"    CASE WHEN c.phone_number = '' OR c.phone_number IS NULL THEN '-' ELSE c.phone_number END AS phone_number, "
+							+"    CASE WHEN c.gstin = '' OR c.gstin IS NULL THEN '-' ELSE c.gstin END AS gstin, "
+							+"    COALESCE(c.is_gst, 0), COALESCE(c.is_eligible_for_commission, 0), "
+							+"    CASE WHEN d.name IS NULL OR d.name = '' THEN '-' ELSE d.name END AS district_name, "
+							+"    COALESCE(c.district_id, 0) "
+					+"		FROM customers c "
+					+"		LEFT JOIN district d ON d.id = c.district_id "
+					+"		WHERE c.is_active = 1 "
+					+"		ORDER BY c.name;");
 	rs =pt.executeQuery();
 	while(rs.next())
 		{
@@ -2340,6 +2350,7 @@ public Vector getCustomerDetails() throws Exception
 			vec.addElement(rs.getString(5) );
 			vec.addElement(rs.getString(6) );
 			vec.addElement(rs.getString(7) );
+			vec.addElement(rs.getString(8) );
 			
 
 		major.addElement(vec);
@@ -2369,7 +2380,11 @@ finally
 		}
 }
 ///////////////////////////////--------------------------
-public void editCustomer(int id, String name, String custPhn, String custAddress, String gstin, int isGst, int isEligibleForCommission) throws Exception
+public void editCustomer(int id, String name, String custPhn, String custAddress, String gstin, int isGst, int isEligibleForCommission) throws Exception {
+    editCustomer(id, name, custPhn, custAddress, gstin, isGst, isEligibleForCommission, 0);
+}
+
+public void editCustomer(int id, String name, String custPhn, String custAddress, String gstin, int isGst, int isEligibleForCommission, int districtId) throws Exception
 	{
 	Connection con 			= null;
 	PreparedStatement pt 	= null;
@@ -2377,14 +2392,16 @@ public void editCustomer(int id, String name, String custPhn, String custAddress
 	try
 		{
 		con						= util.DBConnectionManager.getConnectionFromPool();
-		pt=con.prepareStatement("UPDATE customers SET name=?, phone_number=?, address=?, gstin=?, is_gst=?, is_eligible_for_commission=? WHERE id=?");
+		pt=con.prepareStatement("UPDATE customers SET name=?, phone_number=?, address=?, gstin=?, is_gst=?, is_eligible_for_commission=?, district_id=? WHERE id=?");
 		pt.setString(1,name);
 		pt.setString(2,custPhn);
 		pt.setString(3,custAddress);
 		pt.setString(4,gstin);
 		pt.setInt(5,isGst);
 		pt.setInt(6,isEligibleForCommission);
-		pt.setInt(7,id);
+		if (districtId > 0) pt.setInt(7, districtId);
+		else pt.setNull(7, java.sql.Types.INTEGER);
+		pt.setInt(8,id);
 
 		pt.executeUpdate();
 		con.commit();
@@ -2573,17 +2590,19 @@ public Vector searchCustomers(String query) throws Exception {
         Vector major = new Vector();
         
         pt = con.prepareStatement(
-            "SELECT id, name, " +
-            "CASE WHEN phone_number = '' OR phone_number IS NULL THEN '-' ELSE phone_number END AS phone_number, " +
-            "CASE WHEN address = '' OR address IS NULL THEN '-' ELSE address END AS address, " +
-            "CASE WHEN gstin = '' OR gstin IS NULL THEN '-' ELSE gstin END AS gstin, " +
-            "COALESCE(credit_limit, 0) AS credit_limit, " +
-            "COALESCE(is_gst, 0) AS is_gst, " +
-            "COALESCE(is_eligible_for_commission, 0) AS is_eligible_for_commission, " +
-            "COALESCE(exchange_point, 0) AS exchange_point " +
-            "FROM customers " +
-            "WHERE is_active = 1 AND name LIKE ? " +
-            "ORDER BY name LIMIT 10"
+            "SELECT c.id, c.name, " +
+            "CASE WHEN c.phone_number = '' OR c.phone_number IS NULL THEN '-' ELSE c.phone_number END AS phone_number, " +
+            "CASE WHEN c.address = '' OR c.address IS NULL THEN '-' ELSE c.address END AS address, " +
+            "CASE WHEN c.gstin = '' OR c.gstin IS NULL THEN '-' ELSE c.gstin END AS gstin, " +
+            "COALESCE(c.credit_limit, 0) AS credit_limit, " +
+            "COALESCE(c.is_gst, 0) AS is_gst, " +
+            "COALESCE(c.is_eligible_for_commission, 0) AS is_eligible_for_commission, " +
+            "COALESCE(c.exchange_point, 0) AS exchange_point, " +
+            "CASE WHEN d.name IS NULL OR d.name = '' THEN '-' ELSE d.name END AS district_name " +
+            "FROM customers c " +
+            "LEFT JOIN district d ON d.id = c.district_id " +
+            "WHERE c.is_active = 1 AND c.name LIKE ? " +
+            "ORDER BY c.name LIMIT 10"
         );
         pt.setString(1, "%" + query + "%");
         rs = pt.executeQuery();
@@ -2599,6 +2618,7 @@ public Vector searchCustomers(String query) throws Exception {
             vec.addElement(rs.getInt(7));      // is_gst
             vec.addElement(rs.getInt(8));      // is_eligible_for_commission
             vec.addElement(rs.getDouble(9));   // exchange_point
+            vec.addElement(rs.getString(10));  // district_name
             major.addElement(vec);
         }
         
@@ -2618,17 +2638,19 @@ public Vector searchCustomersByPhone(String phone) throws Exception {
         con = util.DBConnectionManager.getConnectionFromPool();
         Vector major = new Vector();
         pt = con.prepareStatement(
-            "SELECT id, name, " +
-            "CASE WHEN phone_number = '' OR phone_number IS NULL THEN '-' ELSE phone_number END AS phone_number, " +
-            "CASE WHEN address = '' OR address IS NULL THEN '-' ELSE address END AS address, " +
-            "CASE WHEN gstin = '' OR gstin IS NULL THEN '-' ELSE gstin END AS gstin, " +
-            "COALESCE(credit_limit, 0) AS credit_limit, " +
-            "COALESCE(is_gst, 0) AS is_gst, " +
-            "COALESCE(is_eligible_for_commission, 0) AS is_eligible_for_commission, " +
-            "COALESCE(exchange_point, 0) AS exchange_point " +
-            "FROM customers " +
-            "WHERE is_active = 1 AND phone_number LIKE ? " +
-            "ORDER BY name LIMIT 10"
+            "SELECT c.id, c.name, " +
+            "CASE WHEN c.phone_number = '' OR c.phone_number IS NULL THEN '-' ELSE c.phone_number END AS phone_number, " +
+            "CASE WHEN c.address = '' OR c.address IS NULL THEN '-' ELSE c.address END AS address, " +
+            "CASE WHEN c.gstin = '' OR c.gstin IS NULL THEN '-' ELSE c.gstin END AS gstin, " +
+            "COALESCE(c.credit_limit, 0) AS credit_limit, " +
+            "COALESCE(c.is_gst, 0) AS is_gst, " +
+            "COALESCE(c.is_eligible_for_commission, 0) AS is_eligible_for_commission, " +
+            "COALESCE(c.exchange_point, 0) AS exchange_point, " +
+            "CASE WHEN d.name IS NULL OR d.name = '' THEN '-' ELSE d.name END AS district_name " +
+            "FROM customers c " +
+            "LEFT JOIN district d ON d.id = c.district_id " +
+            "WHERE c.is_active = 1 AND c.phone_number LIKE ? " +
+            "ORDER BY c.name LIMIT 10"
         );
         pt.setString(1, "%" + phone + "%");
         rs = pt.executeQuery();
@@ -2643,6 +2665,7 @@ public Vector searchCustomersByPhone(String phone) throws Exception {
             vec.addElement(rs.getInt(7));
             vec.addElement(rs.getInt(8));
             vec.addElement(rs.getDouble(9));
+            vec.addElement(rs.getString(10));
             major.addElement(vec);
         }
         return major;
@@ -2650,6 +2673,27 @@ public Vector searchCustomersByPhone(String phone) throws Exception {
         if (rs != null) try { rs.close(); } catch (SQLException e) { }
         if (pt != null) try { pt.close(); } catch (SQLException e) { }
         if (con != null) try { con.close(); } catch (Exception e) { }
+    }
+}
+/////////////////////////////////////////////////
+public void updateCustomerDistrict(int customerId, int districtId) throws Exception {
+    if (customerId <= 0 || districtId <= 0) return;
+    Connection con = null;
+    PreparedStatement pt = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        con.setAutoCommit(false);
+        pt = con.prepareStatement("UPDATE customers SET district_id = ? WHERE id = ?");
+        pt.setInt(1, districtId);
+        pt.setInt(2, customerId);
+        pt.executeUpdate();
+        con.commit();
+    } catch (Exception e) {
+        if (con != null) try { con.rollback(); } catch (Exception ex) {}
+        throw e;
+    } finally {
+        if (pt != null) try { pt.close(); } catch (Exception e) {}
+        if (con != null) try { con.close(); } catch (Exception e) {}
     }
 }
 /////////////////////////////////////////////////
@@ -5734,6 +5778,113 @@ public Vector getActiveAreaList() throws Exception {
             row.addElement(rs.getInt("id"));
             row.addElement(rs.getString("name"));
             list.addElement(row);
+        }
+        return list;
+    } finally {
+        if (rs != null) try { rs.close(); } catch (Exception e) {}
+        if (pt != null) try { pt.close(); } catch (Exception e) {}
+        if (con != null) try { con.close(); } catch (Exception e) {}
+    }
+}
+
+// District Management Methods
+public Vector getActiveDistrictList() throws Exception {
+    Connection con = null;
+    PreparedStatement pt = null;
+    ResultSet rs = null;
+    Vector list = new Vector();
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        pt = con.prepareStatement("SELECT id, name FROM district WHERE is_active = 1 ORDER BY name");
+        rs = pt.executeQuery();
+        while (rs.next()) {
+            Vector row = new Vector();
+            row.addElement(rs.getInt("id"));
+            row.addElement(rs.getString("name"));
+            list.addElement(row);
+        }
+        return list;
+    } finally {
+        if (rs != null) try { rs.close(); } catch (Exception e) {}
+        if (pt != null) try { pt.close(); } catch (Exception e) {}
+        if (con != null) try { con.close(); } catch (Exception e) {}
+    }
+}
+
+public int resolveDistrictId(String districtName) throws Exception {
+    if (districtName == null || districtName.trim().isEmpty()) {
+        return 0;
+    }
+    String name = districtName.trim();
+    Connection con = null;
+    PreparedStatement pt = null;
+    ResultSet rs = null;
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        con.setAutoCommit(false);
+
+        pt = con.prepareStatement("SELECT id FROM district WHERE LOWER(TRIM(name)) = LOWER(?) AND is_active = 1");
+        pt.setString(1, name);
+        rs = pt.executeQuery();
+        if (rs.next()) {
+            int id = rs.getInt("id");
+            con.commit();
+            return id;
+        }
+        if (rs != null) try { rs.close(); } catch (Exception e) {}
+        if (pt != null) try { pt.close(); } catch (Exception e) {}
+
+        pt = con.prepareStatement("INSERT INTO district(name, is_active, created_date) VALUES (?, 1, NOW())", java.sql.Statement.RETURN_GENERATED_KEYS);
+        pt.setString(1, name);
+        pt.executeUpdate();
+        rs = pt.getGeneratedKeys();
+        int newId = 0;
+        if (rs.next()) newId = rs.getInt(1);
+        if (newId == 0) {
+            if (rs != null) try { rs.close(); } catch (Exception e) {}
+            if (pt != null) try { pt.close(); } catch (Exception e) {}
+            pt = con.prepareStatement("SELECT id FROM district WHERE LOWER(TRIM(name)) = LOWER(?)");
+            pt.setString(1, name);
+            rs = pt.executeQuery();
+            if (rs.next()) newId = rs.getInt("id");
+        }
+        con.commit();
+        return newId;
+    } catch (Exception e) {
+        if (con != null) {
+            try { con.rollback(); } catch (Exception ex) {}
+            try {
+                if (pt != null) try { pt.close(); } catch (Exception ex) {}
+                pt = con.prepareStatement("SELECT id FROM district WHERE LOWER(TRIM(name)) = LOWER(?) AND is_active = 1");
+                pt.setString(1, name);
+                rs = pt.executeQuery();
+                if (rs.next()) return rs.getInt("id");
+            } catch (Exception ex) {}
+        }
+        throw e;
+    } finally {
+        if (rs != null) try { rs.close(); } catch (Exception e) {}
+        if (pt != null) try { pt.close(); } catch (Exception e) {}
+        if (con != null) try { con.close(); } catch (Exception e) {}
+    }
+}
+
+public Vector searchDistricts(String query) throws Exception {
+    Connection con = null;
+    PreparedStatement pt = null;
+    ResultSet rs = null;
+    Vector list = new Vector();
+    try {
+        con = util.DBConnectionManager.getConnectionFromPool();
+        if (query == null || query.trim().isEmpty()) {
+            pt = con.prepareStatement("SELECT name FROM district WHERE is_active = 1 ORDER BY name LIMIT 50");
+        } else {
+            pt = con.prepareStatement("SELECT name FROM district WHERE is_active = 1 AND name LIKE ? ORDER BY name LIMIT 20");
+            pt.setString(1, "%" + query.trim() + "%");
+        }
+        rs = pt.executeQuery();
+        while (rs.next()) {
+            list.addElement(rs.getString("name"));
         }
         return list;
     } finally {

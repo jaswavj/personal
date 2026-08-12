@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, java.text.*" %>
 <jsp:useBean id="bill" class="billing.billingBean" />
+<jsp:useBean id="prod" class="product.productBean" />
 <%
 Integer userId = (Integer) session.getAttribute("userId");
 if (userId == null) {
@@ -10,13 +11,30 @@ if (userId == null) {
 
 String fromDate = request.getParameter("fromDate");
 String toDate   = request.getParameter("toDate");
+String districtIdStr = request.getParameter("districtId");
+int districtId = 0;
+if (districtIdStr != null && districtIdStr.matches("\\d+")) {
+    districtId = Integer.parseInt(districtIdStr);
+}
 
 if (fromDate == null || fromDate.isEmpty() || toDate == null || toDate.isEmpty()) {
     response.sendRedirect(request.getContextPath() + "/reports/clientList/page.jsp");
     return;
 }
 
-Vector clientData = bill.getClientListReport(fromDate, toDate);
+String districtLabel = "All Districts";
+if (districtId > 0) {
+    Vector districtList = prod.getActiveDistrictList();
+    for (int i = 0; i < districtList.size(); i++) {
+        Vector dist = (Vector) districtList.get(i);
+        if (Integer.parseInt(dist.elementAt(0).toString()) == districtId) {
+            districtLabel = dist.elementAt(1).toString();
+            break;
+        }
+    }
+}
+
+Vector clientData = bill.getClientListReport(fromDate, toDate, districtId);
 DecimalFormat df = new DecimalFormat("#,##0.00");
 %>
 <!DOCTYPE html>
@@ -61,6 +79,7 @@ DecimalFormat df = new DecimalFormat("#,##0.00");
             <h5 class="mb-0">
                 <i class="fas fa-user-plus me-2"></i>Client List Report
                 <small class="text-muted ms-2" style="font-size:0.85rem;"><%=fromDate%> to <%=toDate%></small>
+                <small class="text-muted ms-1" style="font-size:0.85rem;">| <%=districtLabel%></small>
             </h5>
             <div class="d-flex gap-2">
                 <a href="<%=contextPath%>/reports/clientList/page.jsp" class="btn btn-secondary btn-sm">
@@ -82,6 +101,7 @@ DecimalFormat df = new DecimalFormat("#,##0.00");
                         <th style="width:50px;">S.No</th>
                         <th style="width:100px;">Date</th>
                         <th>Client Name</th>
+                        <th style="width:120px;">District</th>
                         <th style="width:130px;">Phone Number</th>
                         <th style="width:110px; text-align:right;">Payable (&#8377;)</th>
                         <th>Bill Description</th>
@@ -98,12 +118,14 @@ DecimalFormat df = new DecimalFormat("#,##0.00");
                         double payable     = (Double) row.get(3);
                         String billDesc    = row.get(4).toString();
                         String cusDesc     = row.get(5).toString();
+                        String district    = row.get(6) != null ? row.get(6).toString() : "-";
                         grandPayable      += payable;
                     %>
                     <tr onclick="showCusDesc(this)" data-cusdesc="<%=cusDesc.replace("\"", "&quot;")%>" data-cusname="<%=cusName.replace("\"", "&quot;")%>">
                         <td class="text-center"><%=i + 1%></td>
                         <td><%=date%></td>
                         <td><%=cusName%></td>
+                        <td><%=district%></td>
                         <td><%=cusPhn%></td>
                         <td class="text-end"><%=df.format(payable)%></td>
                         <td><%=billDesc%></td>
@@ -112,13 +134,13 @@ DecimalFormat df = new DecimalFormat("#,##0.00");
 
                     <% if (clientData.isEmpty()) { %>
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
+                        <td colspan="7" class="text-center text-muted py-4">
                             No new clients found for the selected date range.
                         </td>
                     </tr>
                     <% } else { %>
                     <tr class="total-row">
-                        <td colspan="4" class="text-end">Grand Total</td>
+                        <td colspan="5" class="text-end">Grand Total</td>
                         <td class="text-end"><%=df.format(grandPayable)%></td>
                         <td></td>
                     </tr>

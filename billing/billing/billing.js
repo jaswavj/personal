@@ -13,18 +13,18 @@ let currentQuotationId = null; // Store current quotation ID when converting to 
 let customerAutocompleteTimeout;
 const customerNameInput = document.getElementById("customerName");
 const customerPhnInput = document.getElementById("customerPhn");
+const customerDistrictInput = document.getElementById("customerDistrict");
 const customerIdInput = document.getElementById("customerId");
 
 customerNameInput.addEventListener("input", function() {
     const query = this.value.trim();
     
     clearTimeout(customerAutocompleteTimeout);
-    
-    // Remove existing autocomplete list
     removeCustomerAutocomplete();
+    customerIdInput.value = "0";
     
     if (query.length < 2) {
-        customerIdInput.value = "0";
+        if (customerDistrictInput) customerDistrictInput.value = "";
         enableSaveButton(); // Re-enable when customer is cleared
         const ct = document.getElementById('isCommission');
         if (ct) ct.checked = false;
@@ -78,6 +78,9 @@ function showCustomerAutocomplete(customers) {
 function selectCustomer(customer) {
     customerNameInput.value = customer.name;
     customerPhnInput.value = customer.phone !== '-' ? customer.phone : '';
+    if (customerDistrictInput) {
+        customerDistrictInput.value = (customer.district && customer.district !== '-') ? customer.district : '';
+    }
     customerIdInput.value = customer.id;
     document.getElementById('customerCreditLimit').value = customer.creditLimit || 0;
     const commissionToggle = document.getElementById('isCommission');
@@ -201,6 +204,7 @@ customerPhnInput.addEventListener("input", function() {
     const q = this.value.trim();
     clearTimeout(phoneAutocompleteTimeout);
     removePhoneAutocomplete();
+    customerIdInput.value = "0";
     if (q.length < 3) return;
 
     phoneAutocompleteTimeout = setTimeout(() => {
@@ -690,6 +694,7 @@ function saveBill() {
     // Get customer name and ID
     let customerName = document.getElementById("customerName").value.trim();
     let customerPhn = document.getElementById("customerPhn").value.trim();
+    let customerDistrict = document.getElementById("customerDistrict") ? document.getElementById("customerDistrict").value.trim() : "";
     let customerId = document.getElementById("customerId").value;
     if ((!customerId || customerId === "0") && (customerName === "" || customerName === "-")) customerId = "1";
     let attenderId = document.getElementById("attenderId") ? document.getElementById("attenderId").value : "";
@@ -745,7 +750,7 @@ function saveBill() {
     window._pendingBill = {
         customerName, customerId, attenderId, priceCategory, isTaxBill, isNewClient, isCloud,
         finalDiscount, payableAmount, grandTotal, priceTotal, discountTotal,
-        customerPhn, mode, type, cashPaid, bankPaid, totalPaid, balance
+        customerPhn, customerDistrict, mode, type, cashPaid, bankPaid, totalPaid, balance
     };
     document.getElementById('billDescInput').value = '';
     new bootstrap.Modal(document.getElementById('billDescModal')).show();
@@ -784,6 +789,9 @@ function doSaveBill() {
 
     const b = window._pendingBill;
     window._pendingBill = null;
+    const districtName = document.getElementById("customerDistrict")
+        ? document.getElementById("customerDistrict").value.trim()
+        : (b.customerDistrict || "");
 
     // Send to server via AJAX
     $.ajax({
@@ -801,6 +809,7 @@ function doSaveBill() {
             priceTotal:   b.priceTotal,
             discountTotal: b.discountTotal,
             customerPhn:  b.customerPhn,
+            districtName: districtName,
             mode:         b.mode,
             type:         b.type,
             cashPaid:     b.cashPaid,

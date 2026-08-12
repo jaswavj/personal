@@ -140,41 +140,45 @@ CREATE TABLE `customers` (
   `is_gst` int DEFAULT '0',
   `salesman` int DEFAULT NULL,
   `area` int DEFAULT NULL,
+  `district_id` int DEFAULT NULL,
   `credit_limit` double(10,2) NOT NULL DEFAULT '0.00',
   `local` int DEFAULT '1',
   `exchange_point` double(10,3) DEFAULT '0.000',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `customers` */
 
-insert  into `customers`(`id`,`name`,`phone_number`,`address`,`date`,`time`,`is_eligible_for_commission`,`is_active`,`gstin`,`is_gst`,`salesman`,`area`,`credit_limit`,`local`,`exchange_point`) values 
-(1,'SAI DHEETSHA HEART HOSPITAL','7904612433','SAI DHEETSHA HEART HOSPITAL NO: 1051 EVEN ROAD GH OPP ERODE - 638 009 PH- 90036 24989\r\n7904612433(ADMIN BASKARAN) 6384638471(BHAKYA)','2026-05-18','11:40:05',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(2,'SAI DHEETSHA SUPER SPECIALITY MEDICAL CENTRE','7904612433','SAI DHEETSHA SUPER SPECIALITY MEDICAL CENTRE\r\n NO-590 A/B MAIN ROAD NEAR BUS STAND,BHAVANI-638302 PH - 9629022201','2026-05-18','11:40:28',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(3,'VETRI MOBILES & HOME APPLIANCES','9384338182','No 4/171-3 Sourastra colony  ,Aruppukottai Main Road, colony Bus stop, valayankulam Madurai -625022.  Ph: 9751780556 State: 33-Tamil Nadu','2026-05-18','11:40:56',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(4,'Tamil Crafts','8270176355','No 4 Anna Complex, Kailash Nager Kattur, Trichy,TamilNadu, 620019 Ph: 7540091999','2026-05-18','11:41:17',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(5,'HITECH INDIA AGRO INDUSTRY','8838900000','NO,2/200C, DHANAM NAGAR Karayampalayam,Mylampatti,Coimbatore 8870238992---8838900000','2026-05-18','11:41:37',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(6,'VETRIVELA ','9080703703','2F/F12, SAMINATHAN NAGAR SURATHOOR BYE PASS, THURAIYUR TAMILNADU, Code:33 Mobile: 9943922981 GSTIN: 33AMFPB8134R2ZS','2026-05-18','11:42:07',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(7,'SM Store chennai','9884422517','CHENNAI','2026-05-18','11:42:22',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(8,'Everyday Restro Cafe','9994209494','\"Tv kovil main road, srirangam. \r\nMobile 9994209494\" 33BVMPA5007K1ZS','2026-05-18','11:42:43',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(9,'AJ Computer centre','9976030500','CHENNAI','2026-05-18','11:43:02',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(10,'mapla menswear','9047476247','VALLIUR','2026-05-18','11:43:19',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(11,'mohana electrical pudukottai','8122122150',' pudukottai','2026-05-18','11:43:33',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(12,'JAngel rehoboth clothing chennai','8056191358','CHENNAI','2026-05-18','11:43:47',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(13,'Bike inventory ','9342217202',' nagercoil','2026-05-18','11:44:03',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(14,'Guna Gifts(800)','9940125902','chennai','2026-05-18','11:44:26',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(15,'Kingston wholesale(550)','7010122543','nagercoil','2026-05-18','11:44:36',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(16,'javera clothing','9343201020','4,TSMO Syed Ali Nagar Kurichi Main Road Tirunelveli-627005','2026-05-18','11:49:39',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(17,'Somnath agro machine','9597949332','','2026-05-18','11:49:57',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(18,'MOULANA(600)','9715825688','ORATHANADU','2026-05-18','15:57:46',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(19,'Teabench puther(600)','6383798553','','2026-05-29','10:04:56',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(20,'Electrical shop thittuvilai','8925063834','','2026-05-30','13:21:50',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(21,'CLOUD PROFIT','-','','2026-06-01','10:08:05',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(22,'jayaraj toh','-','','2026-06-05','11:00:43',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(23,'Mahesh Periyanayaki Transport','9884483426','Chennai','2026-06-10','10:09:16',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(24,'THIRUMALA GOLD BUYER','9087208017','CHENNAI \r\nPADI','2026-06-18','12:05:18',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(25,'Saran Loopbikes Insta ads','9360455270','','2026-06-23','16:31:28',0,1,'',0,NULL,NULL,0.00,1,0.000),
-(26,'Gold Karungal Akash','9894815120','','2026-06-23','17:55:00',0,1,'',0,NULL,NULL,0.00,1,0.000);
+insert  into `customers`(`id`,`name`,`phone_number`,`address`,`date`,`time`,`is_eligible_for_commission`,`is_active`,`gstin`,`is_gst`,`salesman`,`area`,`district_id`,`credit_limit`,`local`,`exchange_point`) values 
+(1,'SAI DHEETSHA HEART HOSPITAL','7904612433','SAI DHEETSHA HEART HOSPITAL NO: 1051 EVEN ROAD GH OPP ERODE - 638 009 PH- 90036 24989\r\n7904612433(ADMIN BASKARAN) 6384638471(BHAKYA)','2026-05-18','11:40:05',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(2,'SAI DHEETSHA SUPER SPECIALITY MEDICAL CENTRE','7904612433','SAI DHEETSHA SUPER SPECIALITY MEDICAL CENTRE\r\n NO-590 A/B MAIN ROAD NEAR BUS STAND,BHAVANI-638302 PH - 9629022201','2026-05-18','11:40:28',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(3,'VETRI MOBILES & HOME APPLIANCES','9384338182','No 4/171-3 Sourastra colony  ,Aruppukottai Main Road, colony Bus stop, valayankulam Madurai -625022.  Ph: 9751780556 State: 33-Tamil Nadu','2026-05-18','11:40:56',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(4,'Tamil Crafts','8270176355','No 4 Anna Complex, Kailash Nager Kattur, Trichy,TamilNadu, 620019 Ph: 7540091999','2026-05-18','11:41:17',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(5,'HITECH INDIA AGRO INDUSTRY','8838900000','NO,2/200C, DHANAM NAGAR Karayampalayam,Mylampatti,Coimbatore 8870238992---8838900000','2026-05-18','11:41:37',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(6,'VETRIVELA ','9080703703','2F/F12, SAMINATHAN NAGAR SURATHOOR BYE PASS, THURAIYUR TAMILNADU, Code:33 Mobile: 9943922981 GSTIN: 33AMFPB8134R2ZS','2026-05-18','11:42:07',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(7,'SM Store chennai','9884422517','CHENNAI','2026-05-18','11:42:22',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(8,'Everyday Restro Cafe','9994209494','\"Tv kovil main road, srirangam. \r\nMobile 9994209494\" 33BVMPA5007K1ZS','2026-05-18','11:42:43',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(9,'AJ Computer centre','9976030500','CHENNAI','2026-05-18','11:43:02',0,1,'',0,NULL,NULL,1,0.00,1,0.000),
+(10,'mapla menswear','9047476247','VALLIUR','2026-05-18','11:43:19',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(11,'mohana electrical pudukottai','8122122150',' pudukottai','2026-05-18','11:43:33',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(12,'JAngel rehoboth clothing chennai','8056191358','CHENNAI','2026-05-18','11:43:47',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(13,'Bike inventory ','9342217202',' nagercoil','2026-05-18','11:44:03',0,1,'',0,NULL,NULL,2,0.00,1,0.000),
+(14,'Guna Gifts(800)','9940125902','chennai','2026-05-18','11:44:26',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(15,'Kingston wholesale(550)','7010122543','nagercoil','2026-05-18','11:44:36',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(16,'javera clothing','9343201020','4,TSMO Syed Ali Nagar Kurichi Main Road Tirunelveli-627005','2026-05-18','11:49:39',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(17,'Somnath agro machine','9597949332','','2026-05-18','11:49:57',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(18,'MOULANA(600)','9715825688','ORATHANADU','2026-05-18','15:57:46',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(19,'Teabench puther(600)','6383798553','','2026-05-29','10:04:56',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(20,'Electrical shop thittuvilai','8925063834','','2026-05-30','13:21:50',0,1,'',0,NULL,NULL,2,0.00,1,0.000),
+(21,'CLOUD PROFIT','-','','2026-06-01','10:08:05',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(22,'jayaraj toh','-','','2026-06-05','11:00:43',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(23,'Mahesh Periyanayaki Transport','9884483426','Chennai','2026-06-10','10:09:16',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(24,'THIRUMALA GOLD BUYER','9087208017','CHENNAI \r\nPADI','2026-06-18','12:05:18',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(25,'Saran Loopbikes Insta ads','9360455270','','2026-06-23','16:31:28',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(26,'Gold Karungal Akash','9894815120','','2026-06-23','17:55:00',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(27,'jaswa','989898989','','2026-08-12','15:20:27',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(28,'jasA','11111','','2026-08-12','15:22:21',0,1,'',0,NULL,NULL,NULL,0.00,1,0.000),
+(29,'kig','7777777','','2026-08-12','15:26:53',0,1,'',0,NULL,NULL,3,0.00,1,0.000);
 
 /*Table structure for table `customers_exchange_point` */
 
@@ -194,6 +198,26 @@ CREATE TABLE `customers_exchange_point` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `customers_exchange_point` */
+
+/*Table structure for table `district` */
+
+DROP TABLE IF EXISTS `district`;
+
+CREATE TABLE `district` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `is_active` int DEFAULT '1',
+  `created_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_district_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+/*Data for the table `district` */
+
+insert  into `district`(`id`,`name`,`is_active`,`created_date`) values 
+(1,'chennai',1,'2026-08-12 15:11:48'),
+(2,'kanyakumari',1,'2026-08-12 15:14:23'),
+(3,'madurai',1,'2026-08-12 15:27:26');
 
 /*Table structure for table `expense_entry` */
 
@@ -388,7 +412,7 @@ CREATE TABLE `prod_batch_zero_stock_bill` (
   KEY `batch` (`batch_id`),
   KEY `prod` (`product_id`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_batch_zero_stock_bill` */
 
@@ -424,7 +448,10 @@ insert  into `prod_batch_zero_stock_bill`(`id`,`batch_id`,`product_id`,`qty`,`da
 (29,'4',4,1.00,'2026-06-20','10:11:41',1),
 (30,'4',4,1.00,'2026-06-22','12:21:39',1),
 (31,'4',4,1.00,'2026-06-23','16:31:28',1),
-(32,'1',1,1.00,'2026-06-23','17:55:00',1);
+(32,'1',1,1.00,'2026-06-23','17:55:00',1),
+(33,'1',1,1.00,'2026-08-12','15:20:28',1),
+(34,'1',1,1.00,'2026-08-12','15:22:21',1),
+(35,'1',1,1.00,'2026-08-12','15:26:53',1);
 
 /*Table structure for table `prod_bill` */
 
@@ -466,7 +493,7 @@ CREATE TABLE `prod_bill` (
   KEY `mode` (`paymentMode`),
   KEY `type` (`paymentType`),
   KEY `idx_is_tax_bill` (`is_tax_bill`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_bill` */
 
@@ -502,7 +529,10 @@ insert  into `prod_bill`(`id`,`bill_display`,`is_tax_bill`,`is_receipt`,`total`,
 (29,'26-26',1,1,200.000,0.000,0.000,200.000,200.000,0.000,0.000,0,2,1,1,'2026-06-20','10:11:41',0,1,'Mahesh Periyanayaki Transport','9884483426',23,3,NULL,NULL,NULL,NULL,'',0,0),
 (30,'26-27',1,1,150.000,0.000,0.000,150.000,150.000,0.000,0.000,0,2,1,1,'2026-06-22','12:21:39',0,1,'Mahesh Periyanayaki Transport','9884483426',23,3,NULL,NULL,NULL,NULL,'bill date and lr date work\nbill_date\nlr no  same date needed\nqty need varchar\nsuccess alert in order',0,0),
 (31,'26-28',1,1,1000.000,0.000,0.000,1000.000,1000.000,0.000,0.000,0,2,1,1,'2026-06-23','16:31:28',0,1,'Saran Loopbikes Insta ads','9360455270',25,3,NULL,NULL,NULL,NULL,'Ads profit',0,0),
-(32,'26-29',1,1,9000.000,0.000,0.000,9000.000,2000.000,7000.000,7000.000,1,2,1,1,'2026-06-23','17:55:00',0,1,'Gold Karungal Akash','9894815120',26,3,NULL,NULL,NULL,NULL,'Insta ads',1,0);
+(32,'26-29',1,1,9000.000,0.000,0.000,9000.000,2000.000,7000.000,7000.000,1,2,1,1,'2026-06-23','17:55:00',0,1,'Gold Karungal Akash','9894815120',26,3,NULL,NULL,NULL,NULL,'Insta ads',1,0),
+(33,'26-30',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,1,0,1,'2026-08-12','15:20:28',0,1,'jaswa','989898989',27,3,NULL,NULL,NULL,NULL,'a',1,0),
+(34,'26-31',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,1,0,1,'2026-08-12','15:22:21',0,1,'jasA','11111',28,3,NULL,NULL,NULL,NULL,'',0,0),
+(35,'26-32',1,1,5000.000,0.000,0.000,5000.000,5000.000,0.000,0.000,0,1,0,1,'2026-08-12','15:26:53',0,1,'kig','7777777',29,3,NULL,NULL,NULL,NULL,'a',1,0);
 
 /*Table structure for table `prod_bill_cancel` */
 
@@ -560,7 +590,7 @@ CREATE TABLE `prod_bill_details` (
   PRIMARY KEY (`id`),
   KEY `bill` (`bill_id`),
   KEY `prod` (`prod_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_bill_details` */
 
@@ -596,7 +626,10 @@ insert  into `prod_bill_details`(`id`,`bill_id`,`prod_id`,`qty`,`price`,`disc`,`
 (29,29,4,1.00,200.000,0.000,200.000,0.000,0.000,0,0,NULL,0),
 (30,30,4,1.00,150.000,0.000,150.000,0.000,0.000,0,0,NULL,0),
 (31,31,4,1.00,1000.000,0.000,1000.000,0.000,0.000,0,0,NULL,0),
-(32,32,1,1.00,9000.000,0.000,9000.000,0.000,0.000,0,0,NULL,0);
+(32,32,1,1.00,9000.000,0.000,9000.000,0.000,0.000,0,0,NULL,0),
+(33,33,1,1.00,5000.000,0.000,5000.000,0.000,0.000,0,0,NULL,0),
+(34,34,1,1.00,5000.000,0.000,5000.000,0.000,0.000,0,0,NULL,0),
+(35,35,1,1.00,5000.000,0.000,5000.000,0.000,0.000,0,0,NULL,0);
 
 /*Table structure for table `prod_bill_due_collection` */
 
@@ -645,7 +678,7 @@ CREATE TABLE `prod_bill_payment` (
   PRIMARY KEY (`id`),
   KEY `billid` (`bill_id`),
   KEY `paymentType` (`paymentType`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_bill_payment` */
 
@@ -681,7 +714,10 @@ insert  into `prod_bill_payment`(`id`,`bill_id`,`cash`,`bank`,`paymentType`) val
 (29,29,0.00,200.00,1),
 (30,30,0.00,150.00,1),
 (31,31,0.00,1000.00,1),
-(32,32,0.00,2000.00,1);
+(32,32,0.00,2000.00,1),
+(33,33,5000.00,0.00,0),
+(34,34,5000.00,0.00,0),
+(35,35,5000.00,0.00,0);
 
 /*Table structure for table `prod_bill_payment_mode` */
 
@@ -888,7 +924,7 @@ CREATE TABLE `prod_cloud_bill_payment` (
   `is_paid` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_bill_year_month` (`bill_id`,`year`,`month`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_cloud_bill_payment` */
 
@@ -902,7 +938,8 @@ insert  into `prod_cloud_bill_payment`(`id`,`bill_id`,`customer_id`,`year`,`mont
 (9,18,18,2026,5,300,'2026-05-27',1),
 (10,11,9,2026,5,1000,'2026-05-29',1),
 (11,20,19,2026,6,600,'2026-06-01',1),
-(12,18,18,2026,7,550,'2026-06-20',1);
+(12,18,18,2026,7,550,'2026-06-20',1),
+(13,20,19,2026,7,600,'2026-06-30',1);
 
 /*Table structure for table `prod_ledger` */
 
@@ -917,7 +954,7 @@ CREATE TABLE `prod_ledger` (
   `ref_id` int DEFAULT NULL COMMENT 'bill_id or expense_entry_id',
   `uid` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 /*Data for the table `prod_ledger` */
 
@@ -951,7 +988,10 @@ insert  into `prod_ledger`(`id`,`entry_date_time`,`content`,`amount`,`is_receipt
 (28,'2026-06-22 15:22:45','Balance Collection #26-24',6000.00,1,27,1),
 (29,'2026-06-22 18:14:00','For my Dress',1013.00,0,16,1),
 (30,'2026-06-23 16:31:28','Bill #26-28',1000.00,1,31,1),
-(31,'2026-06-23 17:55:00','Bill #26-29',2000.00,1,32,1);
+(31,'2026-06-23 17:55:00','Bill #26-29',2000.00,1,32,1),
+(32,'2026-08-12 15:20:28','Bill #26-30',5000.00,1,33,1),
+(33,'2026-08-12 15:22:21','Bill #26-31',5000.00,1,34,1),
+(34,'2026-08-12 15:26:53','Bill #26-32',5000.00,1,35,1);
 
 /*Table structure for table `prod_lifecycle` */
 
@@ -978,7 +1018,7 @@ CREATE TABLE `prod_lifecycle` (
   KEY `uid` (`uid`),
   KEY `stock` (`stockAdjType`),
   KEY `billId` (`bill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
 
 /*Data for the table `prod_lifecycle` */
 
@@ -1018,7 +1058,10 @@ insert  into `prod_lifecycle`(`id`,`bill_id`,`batch_id`,`product_id`,`stock_in`,
 (33,29,4,4,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-06-20','10:11:41',1,1,0),
 (34,30,4,4,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-06-22','12:21:39',1,1,0),
 (35,31,4,4,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-06-23','16:31:29',1,1,0),
-(36,32,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-06-23','17:55:00',1,1,0);
+(36,32,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-06-23','17:55:00',1,1,0),
+(37,33,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-08-12','15:20:28',1,1,0),
+(38,34,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-08-12','15:22:21',1,1,0),
+(39,35,1,1,0.00,1.00,0.00,1,' BILL WITHOUT STOCK','2026-08-12','15:26:53',1,1,0);
 
 /*Table structure for table `prod_order` */
 

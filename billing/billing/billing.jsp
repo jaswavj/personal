@@ -117,6 +117,16 @@ int userDiscPer = (uid != null) ? userBn.getUserDiscPer(uid) : 100;
             background: #fff;
         }
 
+        .fg .ui-autocomplete {
+            z-index: 2000;
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 12px;
+            border-radius: var(--r-sm);
+            box-shadow: var(--shadow);
+        }
+        .fg .ui-menu-item-wrapper { padding: 7px 10px !important; }
+
         .fg-sel {
             height: 33px;
             border: 1.5px solid var(--border);
@@ -479,6 +489,10 @@ int userDiscPer = (uid != null) ? userBn.getUserDiscPer(uid) : 100;
                 <span class="fg-lbl">Phone No</span>
                 <input type="text" id="customerPhn" class="fg-inp" placeholder="Phone number" autocomplete="off">
             </div>
+            <div class="fg" style="flex:1;min-width:120px;">
+                <span class="fg-lbl">District</span>
+                <input type="text" id="customerDistrict" class="fg-inp" placeholder="Type district" autocomplete="off">
+            </div>
             <input type="hidden" id="isTaxBill" value="1">
             <input type="hidden" id="isCommission" value="0">
             <label class="tog">
@@ -808,6 +822,24 @@ int userDiscPer = (uid != null) ? userBn.getUserDiscPer(uid) : 100;
 <script src="billing.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    if ($('#customerDistrict').length) {
+        $('#customerDistrict').autocomplete({
+            minLength: 0,
+            delay: 200,
+            source: function(request, response) {
+                $.getJSON(contextPath + '/product/master/customer/districtAutocomplete.jsp', { term: request.term }, function(data) {
+                    response(data);
+                }).fail(function() { response([]); });
+            },
+            select: function(event, ui) {
+                $(this).val(ui.item.value);
+                return false;
+            }
+        }).focus(function() {
+            $(this).autocomplete('search', $(this).val());
+        });
+    }
+
     // Focus barcode input on load
     setTimeout(function () {
         const pc = document.getElementById('productCode');

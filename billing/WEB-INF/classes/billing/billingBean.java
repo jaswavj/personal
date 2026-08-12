@@ -3248,6 +3248,10 @@ public Vector getSalesReportByCustomer(String from, String to, int customerId) t
 }
 
 public Vector getClientListReport(String fromDate, String toDate) throws Exception {
+    return getClientListReport(fromDate, toDate, 0);
+}
+
+public Vector getClientListReport(String fromDate, String toDate, int districtId) throws Exception {
     Connection con = null;
     PreparedStatement pt = null;
     ResultSet rs = null;
@@ -3256,16 +3260,21 @@ public Vector getClientListReport(String fromDate, String toDate) throws Excepti
         Vector vec = new Vector();
         pt = con.prepareStatement(
             "SELECT pb.date, pb.cusName, pb.cusPhn, pb.payable, " +
-            "pb.description, c.address " +
+            "pb.description, c.address, " +
+            "CASE WHEN d.name IS NULL OR d.name = '' THEN '-' ELSE d.name END AS district_name " +
             "FROM prod_bill pb " +
             "LEFT JOIN customers c ON pb.customerId = c.id " +
+            "LEFT JOIN district d ON d.id = c.district_id " +
             "WHERE pb.is_new_client = 1 " +
             "AND pb.is_cancelled = 0 " +
             "AND pb.date BETWEEN ? AND ? " +
+            "AND (? = 0 OR c.district_id = ?) " +
             "ORDER BY pb.date ASC, pb.id ASC"
         );
         pt.setString(1, fromDate);
         pt.setString(2, toDate);
+        pt.setInt(3, districtId);
+        pt.setInt(4, districtId);
         rs = pt.executeQuery();
         while (rs.next()) {
             Vector row = new Vector();
@@ -3275,6 +3284,7 @@ public Vector getClientListReport(String fromDate, String toDate) throws Excepti
             row.addElement(rs.getDouble(4));   // 3 payable
             row.addElement(rs.getString(5) != null ? rs.getString(5) : ""); // 4 bill description
             row.addElement(rs.getString(6) != null ? rs.getString(6) : ""); // 5 customer address
+            row.addElement(rs.getString(7) != null ? rs.getString(7) : "-"); // 6 district
             vec.addElement(row);
         }
         return vec;
